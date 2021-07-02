@@ -1,12 +1,10 @@
 {
-  "name": "light-blue-vue",
-  "version": "2.1.4",
+  "name": "mhs-management-dashboard",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve --port 80",
     "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint",
-    "start": "node server.js"
+    "lint": "vue-cli-service lint"
   },
   "dependencies": {
     "@amcharts/amcharts4": "^4.10.13",
