@@ -95,7 +95,7 @@ export default {
       if (email.length !== 0 && password.length !== 0) {
         Vue.axios
           .post(
-            "http://localhost:3000/api/auth/login",
+            "http://localhost/api/auth/login",
             {
               email: email,
               password: password,

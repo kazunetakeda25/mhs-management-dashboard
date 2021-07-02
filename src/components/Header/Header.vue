@@ -118,6 +118,8 @@ export default {
   components: { Notifications },
   data() {
     return {
+      name: "", 
+      alertCount: 0, 
       showNavbarAlert: true
     }
   },
