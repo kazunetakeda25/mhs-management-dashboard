@@ -7,7 +7,7 @@
 import Widget from '@/components/Widget/Widget';
 
 export default {
-  name: 'Typography',
+  name: 'Account',
   components: { Widget },
 };
 </script>

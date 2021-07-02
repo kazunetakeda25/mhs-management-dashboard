@@ -2,7 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 
 import Layout from '@/components/Layout/Layout'
-import Typography from '@/pages/Typography/Typography'
+import Account from '@/pages/Account/Account'
 import Dashboard from '@/pages/Visits/Visits'
 import Login from '@/pages/Login/Login'
 import ErrorPage from '@/pages/Error/Error'
@@ -30,7 +30,7 @@ export default new Router({
         {
           path: 'account',
           name: 'Account',
-          component: Typography
+          component: Account
         },
       ]
     },

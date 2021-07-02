@@ -14,8 +14,8 @@
             <span class="avatar rounded-circle thumb-sm-1 float-left mr-2">
               <img class="rounded-circle" src="../../assets/people/a7.png" alt="..." />
             </span>
-            <span class="text-white">Philip Smith</span>
-            <span class="mx-2 circle bg-danger text-dark fs-sm fw-bold">9</span>
+            <span class="text-white">{{ name }}</span>
+            <span class="mx-2 circle bg-danger text-dark fs-sm fw-bold">{{ alertCount }} </span>
             <i class="fi flaticon-arrow-down" />
           </template>
           <notifications />
