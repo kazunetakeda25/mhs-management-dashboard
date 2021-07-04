@@ -2,8 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 
 import Layout from '@/components/Layout/Layout'
-import Account from '@/pages/Account/Account'
-import Dashboard from '@/pages/Visits/Visits'
+import Dashboard from '@/pages/Dashboard/Dashboard'
 import Login from '@/pages/Login/Login'
 import ErrorPage from '@/pages/Error/Error'
 
@@ -26,12 +25,7 @@ export default new Router({
           path: 'dashboard',
           name: 'Dashboard',
           component: Dashboard
-        },
-        {
-          path: 'account',
-          name: 'Account',
-          component: Account
-        },
+        }
       ]
     },
     {

@@ -1,9 +1,6 @@
 <template>
   <div class="visits-page">
-    <div
-      v-if="role == 'Administrator' || role == 'Manager'"
-      class="manager-page"
-    >
+    <div v-if="role == 'Manager'" class="manager-page">
       <h1 class="page-title">
         Manager&nbsp;
         <small>
@@ -18,6 +15,8 @@
           <div class="d-flex justify-content-between">
             <h3><span class="fw-semi-bold">Work Order List</span></h3>
             <b-button
+              id="addWorkOrderButton"
+              :disabled="addWorkOrderDisabled"
               variant="success"
               size="sm"
               v-on:click="showAddWorkOrderModal()"
@@ -25,7 +24,7 @@
             >
           </div>
           <div class="clearfix pt-2 pb-2">
-            <p>Display All Available Works</p>
+            <p>Display All Available Work Orders</p>
           </div>
           <div class="table-responsive">
             <table class="table table-hover">
@@ -91,15 +90,17 @@
           >
             <b-form-group
               label="Item ID"
-              label-for="addWorkOrderId"
-              invalid-feedback="Input Item ID"
+              label-for="addWorkOrderID"
+              invalid-feedback="Select Item ID"
             >
-              <b-form-input
-                id="addWorkOrderId"
-                type="text"
-                v-model="addWorkOrderId"
-                trim
-              ></b-form-input>
+              <multiselect
+                id="addWorkOrderID"
+                label="name"
+                placeholder="Select Item ID"
+                track-by="wid"
+                v-model="addWorkOrderID"
+                :options="mngIDDropdownOptions"
+              ></multiselect>
             </b-form-group>
             <b-form-group
               label="QTY"
@@ -254,6 +255,172 @@
         </b-tab>
       </b-tabs>
     </div>
+    <div v-if="role == 'Developer'" class="manager-page">
+      <h1 class="page-title">
+        Developer&nbsp;
+        <small>
+          <small>Management</small>
+        </small>
+      </h1>
+      Greetings, {{ name }}!
+      <br />
+      <br />
+      <b-tabs>
+        <b-tab title="Work Items" active>
+          <div class="d-flex justify-content-between">
+            <h3><span class="fw-semi-bold">Work Items List</span></h3>
+            <b-button
+              id="addWorkButton"
+              variant="success"
+              size="sm"
+              v-on:click="showAddWorkModal()"
+              >Add New</b-button
+            >
+          </div>
+          <div class="clearfix pt-2 pb-2">
+            <p>Display All Available Work Items</p>
+          </div>
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Image</th>
+                  <th>Description</th>
+                  <th>Instruction Text</th>
+                  <th>Instruction Photo</th>
+                  <th>Instruction Video</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="row in mngWorkList" :key="row.id">
+                  <td>{{ row.wid }}</td>
+                  <td>
+                    <!-- <img
+                      class="img-rounded"
+                      :src="
+                        require(`http://localhost:4000/uploads/images/${row.image}`)
+                      "
+                      alt=""
+                      height="50"
+                    /> -->
+                  </td>
+                  <td>
+                    <p class="text-max-5-lines">{{ row.description }}</p>
+                  </td>
+                  <td>
+                    <p class="text-max-5-lines">{{ row.instruction_text }}</p>
+                  </td>
+                  <td>
+                    <b-button
+                      size="sm"
+                      variant="primary"
+                      v-on:click="viewWorkPhoto(row.instruction_photo)"
+                      ><i class="fa fa-eye"></i>&nbsp; View</b-button
+                    >
+                  </td>
+                  <td>
+                    <b-button
+                      size="sm"
+                      variant="primary"
+                      v-on:click="viewWorkVideo(row.instruction_video)"
+                      ><i class="fa fa-eye"></i>&nbsp; View</b-button
+                    >
+                  </td>
+                  <td>
+                    <b-button-group>
+                      <b-button
+                        size="sm"
+                        variant="primary"
+                        v-on:click="showWorkEditModal(row.id)"
+                        ><i class="fa fa-edit"></i
+                      ></b-button>
+                      <b-button
+                        size="sm"
+                        variant="danger"
+                        v-on:click="deleteWork(row.id)"
+                        ><i class="fa fa-trash"></i
+                      ></b-button>
+                    </b-button-group>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <b-modal id="add-work-modal" centered title="Add New Work Item">
+            <b-form-group
+              label="Item ID"
+              label-for="addWorkItemID"
+              invalid-feedback="Input Item ID"
+            >
+              <b-form-input
+                id="addWorkItemID"
+                type="text"
+                v-model="addWorkItemID"
+                trim
+              ></b-form-input>
+            </b-form-group>
+            <b-form-group
+              label="Image"
+              label-for="addWorkImage"
+              invalid-feedback="Choose Image"
+            >
+              <vue-dropzone
+                id="addWorkImage"
+                :options="{
+                  url: 'https://httpbin.org/post',
+                  thumbnailWidth: 200,
+                  addRemoveLinks: true,
+                }"
+                :useCustomSlot="true"
+              >
+                <div class="dropzone-custom-content">
+                  <h3 class="dropzone-custom-title">
+                    Drag and drop to upload content!
+                  </h3>
+                  <div class="subtitle">
+                    ...or click to select a file from your computer
+                  </div>
+                </div>
+              </vue-dropzone>
+            </b-form-group>
+            <b-form-group
+              label="Description"
+              label-for="addWorkDescription"
+              invalid-feedback="Input Description"
+            >
+              <b-form-input
+                id="addWorkDescription"
+                type="text"
+                v-model="addWorkDescription"
+                trim
+              ></b-form-input>
+            </b-form-group>
+            <b-form-group
+              label="Instruction Text"
+              label-for="addWorkInstructionText"
+              invalid-feedback="Input Instruction Text"
+            >
+              <b-form-input
+                id="addWorkInstructionText"
+                type="text"
+                v-model="addWorkInstructionText"
+                trim
+              ></b-form-input>
+            </b-form-group>
+            <template #modal-footer="{ cancel }">
+              <b-button size="sm" variant="default" @click="cancel()">
+                Cancel
+              </b-button>
+              <b-button size="sm" variant="success" v-on:click="addWorkOrder()">
+                Add
+              </b-button>
+            </template>
+          </b-modal>
+        </b-tab>
+      </b-tabs>
+    </div>
     <div v-if="role == 'Assembler'" class="worker-page">
       <h1 class="page-title">
         Assembler
@@ -352,20 +519,35 @@
             style="width: 100%; max-width: 450px"
           />
           <div class="pt-5 w-100">
-            <b-button variant="warning" class="float-right" size="sm" v-on:click="showMaterialsModal()"
+            <b-button
+              variant="warning"
+              class="float-right"
+              size="sm"
+              v-on:click="showMaterialsModal()"
               >Materials</b-button
             >
-            <b-button variant="default" class="mr-3 float-right" size="sm" v-on:click="showStackingModal()"
+            <b-button
+              variant="default"
+              class="mr-3 float-right"
+              size="sm"
+              v-on:click="showStackingModal()"
               >Stacking</b-button
             >
-            <b-button variant="dark" class="mr-3 float-right" size="sm" v-on:click="showInstructionsModal()"
+            <b-button
+              variant="dark"
+              class="mr-3 float-right"
+              size="sm"
+              v-on:click="showInstructionsModal()"
               >Instructions</b-button
             >
           </div>
         </b-col>
       </b-row>
       <b-modal id="instructions-modal" size="lg" centered title="Instructions">
-        <div style="width: 100%; height: 400px" class="d-flex justify-content-center align-items-center">
+        <div
+          style="width: 100%; height: 400px"
+          class="d-flex justify-content-center align-items-center"
+        >
           <p>This modal will be explaining how to assemble the item.</p>
         </div>
         <template #modal-footer="{ cancel }">
@@ -375,7 +557,10 @@
         </template>
       </b-modal>
       <b-modal id="stacking-modal" size="lg" centered title="Stacking">
-        <div style="width: 100%; height: 400px" class="d-flex justify-content-center align-items-center">
+        <div
+          style="width: 100%; height: 400px"
+          class="d-flex justify-content-center align-items-center"
+        >
           <p>Stacking Placeholder</p>
         </div>
         <template #modal-footer="{ cancel }">
@@ -385,7 +570,10 @@
         </template>
       </b-modal>
       <b-modal id="materials-modal" size="lg" centered title="Materials">
-        <div style="width: 100%; height: 400px" class="d-flex justify-content-center align-items-center">
+        <div
+          style="width: 100%; height: 400px"
+          class="d-flex justify-content-center align-items-center"
+        >
           <p>Materials Placeholder</p>
         </div>
         <template #modal-footer="{ cancel }">
@@ -405,10 +593,12 @@ import Multiselect from "vue-multiselect";
 export default {
   name: "ManagerDashboard",
   sockets: {
-    connect: function () {
-    },
+    connect: function () {},
     fetchData: function (data) {
       let helper = {};
+      this.addWorkOrderID = null;
+      this.mngWorkList = data.mngWorkList;
+      this.mngIDDropdownOptions = data.mngWorkList;
       this.addWorkOrderStation = null;
       this.mngWorkOrderList = data.mngWorkOrderList;
       this.mngWorkOrderListByStation = [];
@@ -452,6 +642,16 @@ export default {
         this.assSubWorkOrderList = data.assSubWorkOrderList;
       }
       this.assSubWorkOrderInProgress = {};
+      if (
+        this.mngIDDropdownOptions == undefined ||
+        this.mngIDDropdownOptions.length == 0 ||
+        this.mngStationDropdownOptions == undefined ||
+        this.mngStationDropdownOptions.length == 0
+      ) {
+        this.addWorkOrderDisabled = true;
+      } else {
+        this.addWorkOrderDisabled = false;
+      }
       if (this.role == "Assembler") {
         let hasWork = false;
         let nextWorkOrderId = 0;
@@ -503,13 +703,16 @@ export default {
       role: "",
       stationName: "",
 
-      mngWorkOrderList: [],
+      mngWorkList: [], // Work List
+      mngIDDropdownOptions: [],
+      mngWorkOrderList: [], // Work Order List
       mngWorkOrderListByStation: [],
-      mngStationList: [],
+      mngStationList: [], // Station List
       mngStationDropdownOptions: [],
       mngBuiltCount: 0,
 
-      addWorkOrderId: "",
+      addWorkOrderDisabled: false,
+      addWorkOrderID: "",
       addWorkOrderQuantity: "",
       addWorkOrderStation: null,
       addStationName: "",
@@ -520,8 +723,31 @@ export default {
     };
   },
   methods: {
+    showAddWorkModal: function () {
+      this.addWorkID = "";
+      this.addWorkImage = null;
+      this.addWorkDescription = "";
+      this.addWorkInstructionText = "";
+      this.addWorkInstructionPhoto = null;
+      this.addWorkInstructionVideo = null;
+      this.$bvModal.show("add-work-modal");
+    },
+    addWork: function () {
+      let stations = [];
+      for (let i = 0; i < this.addWorkOrderStation.length; i++) {
+        stations.push(this.addWorkOrderStation[i].value);
+      }
+      if (stations.length > 0) {
+        this.$socket.emit("addWorkOrder", {
+          work_id: this.addWorkOrderID.id,
+          qty: this.addWorkOrderQuantity,
+          station_ids: stations,
+        });
+      }
+      this.$bvModal.hide("add-work-order-modal");
+    },
     showAddWorkOrderModal: function () {
-      this.addWorkOrderId = "";
+      this.addWorkOrderID = null;
       this.addWorkOrderQuantity = "";
       this.addWorkOrderStation = null;
       this.$bvModal.show("add-work-order-modal");
@@ -533,7 +759,7 @@ export default {
       }
       if (stations.length > 0) {
         this.$socket.emit("addWorkOrder", {
-          work_id: this.addWorkOrderId,
+          work_id: this.addWorkOrderID.id,
           qty: this.addWorkOrderQuantity,
           station_ids: stations,
         });
@@ -579,5 +805,5 @@ export default {
 };
 </script>
 
-<style src="./Visits.scss" lang="scss" />
+<style src="./Dashboard.scss" lang="scss" />
 <style src="./multiselect.css" lang="css" />

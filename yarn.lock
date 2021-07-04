@@ -2979,6 +2979,11 @@ dotignore@~0.1.2:
   dependencies:
     minimatch "^3.0.4"
 
+dropzone@^5.5.1:
+  version "5.9.2"
+  resolved "https://registry.yarnpkg.com/dropzone/-/dropzone-5.9.2.tgz#0a90ce3f6b011c3932484f368f4bf06223729450"
+  integrity sha512-5t2z51DzIsWDbTpwcJIvUlwxBbvcwdCApz0yb9ecKJwG155Xm92KMEZmHW1B0MzoXOKvFwdd0nPu5cpeVcvPHQ==
+
 duplexer2@~0.1.4:
   version "0.1.4"
   resolved "https://registry.yarnpkg.com/duplexer2/-/duplexer2-0.1.4.tgz#8b12dab878c0d69e3e7891051662a32fc6bddcc1"
@@ -8369,6 +8374,13 @@ vue-toasted@^1.1.28:
   version "1.1.28"
   resolved "https://registry.yarnpkg.com/vue-toasted/-/vue-toasted-1.1.28.tgz#dbabb83acc89f7a9e8765815e491d79f0dc65c26"
   integrity sha512-UUzr5LX51UbbiROSGZ49GOgSzFxaMHK6L00JV8fir/CYNJCpIIvNZ5YmS4Qc8Y2+Z/4VVYRpeQL2UO0G800Raw==
+
+vue2-dropzone@^3.6.0:
+  version "3.6.0"
+  resolved "https://registry.yarnpkg.com/vue2-dropzone/-/vue2-dropzone-3.6.0.tgz#b4bb4b64de1cbbb3b88f04b24878e06780a51546"
+  integrity sha512-YXC1nCWIZvfa98e/i6h+EshZCkFSxFEh0Sxr9ODfThAPPDVhAzLLlz/4XIx0NGO1QeSy6htwSstte47R7vVhLQ==
+  dependencies:
+    dropzone "^5.5.1"
 
 vue2-google-maps@0.10.7:
   version "0.10.7"
