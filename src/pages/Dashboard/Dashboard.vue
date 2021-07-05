@@ -411,7 +411,7 @@
                 :options="{
                   uploadMultiple: false,
                   maxFilesize: 4,
-                  url: 'http://localhost:4000/api/upload-image',
+                  url: 'http://localhost:4000/api/upload-image', // 'http://45.63.108.165:4000/api/upload-image'
                   acceptdFiles: 'image/*',
                   thumbnailWidth: 150,
                   thumbnailHeight: 150,
@@ -460,7 +460,7 @@
                   uploadMultiple: false,
                   maxFilesize: 500,
                   acceptdFiles: 'video/*',
-                  url: 'http://localhost:4000/api/upload-video',
+                  url: 'http://localhost:4000/api/upload-video', // 'http://45.63.108.165:4000/api/upload-video'
                   thumbnailWidth: 150,
                   thumbnailHeight: 150,
                   addRemoveLinks: true,
@@ -483,7 +483,7 @@
                   uploadMultiple: false,
                   maxFilesize: 4,
                   acceptdFiles: 'image/*',
-                  url: 'http://localhost:4000/api/upload-image',
+                  url: 'http://localhost:4000/api/upload-image', // 'http://45.63.108.165:4000/api/upload-image'
                   thumbnailWidth: 150,
                   thumbnailHeight: 150,
                   addRemoveLinks: true,
@@ -533,7 +533,7 @@
                 :options="{
                   uploadMultiple: false,
                   maxFilesize: 4,
-                  url: 'http://localhost:4000/api/upload-image',
+                  url: 'http://localhost:4000/api/upload-image', // 'http://45.63.108.165:4000/api/upload-image'
                   acceptdFiles: 'image/*',
                   thumbnailWidth: 150,
                   thumbnailHeight: 150,
@@ -582,7 +582,7 @@
                   uploadMultiple: false,
                   maxFilesize: 500,
                   acceptdFiles: 'video/*',
-                  url: 'http://localhost:4000/api/upload-video',
+                  url: 'http://localhost:4000/api/upload-video', // 'http://45.63.108.165:4000/api/upload-video'
                   thumbnailWidth: 150,
                   thumbnailHeight: 150,
                   addRemoveLinks: true,
@@ -605,7 +605,7 @@
                   uploadMultiple: false,
                   maxFilesize: 4,
                   acceptdFiles: 'image/*',
-                  url: 'http://localhost:4000/api/upload-image',
+                  url: 'http://localhost:4000/api/upload-image', // 'http://45.63.108.165:4000/api/upload-image'
                   thumbnailWidth: 150,
                   thumbnailHeight: 150,
                   addRemoveLinks: true,
