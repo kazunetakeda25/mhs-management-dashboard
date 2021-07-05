@@ -257,7 +257,6 @@
   opacity: 1;
 }
 .dropzone .dz-preview.dz-file-preview .dz-image {
-  border-radius: 20px;
   background: #999;
   background: linear-gradient(to bottom, #eee, #ddd);
 }
@@ -491,8 +490,8 @@
   height: 100%;
 }
 .vue-dropzone > .dz-preview .dz-image img:not([src]) {
-  width: 200px;
-  height: 200px;
+  width: 150px;
+  height: 150px;
 }
 .vue-dropzone > .dz-preview .dz-image:hover img {
   transform: none;

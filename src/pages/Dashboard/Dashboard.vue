@@ -317,24 +317,6 @@
                       v-on:click="viewWorkPhoto(row.instruction_photo)"
                       ><i class="fa fa-eye"></i>&nbsp; View</b-button
                     >
-                    <b-modal
-                      id="view-work-photo"
-                      centered
-                      title="Instruction Photo"
-                      size="lg"
-                    >
-                      <img
-                        class="img-rounded"
-                        :src="viewWorkPhoto"
-                        alt=""
-                        height="500"
-                      />
-                      <template #modal-footer="{ cancel }">
-                        <b-button size="sm" variant="default" @click="cancel()">
-                          Close
-                        </b-button>
-                      </template>
-                    </b-modal>
                   </td>
                   <td>
                     <b-button
@@ -343,19 +325,6 @@
                       v-on:click="viewWorkVideo(row.instruction_video)"
                       ><i class="fa fa-eye"></i>&nbsp; View</b-button
                     >
-                    <b-modal
-                      id="view-work-video"
-                      centered
-                      size="lg"
-                      title="Instruction Video"
-                    >
-                      <my-video :sources="viewWorkVideoSource" :options="{ autoplay: true, volume: 1}"></my-video>
-                      <template #modal-footer="{ cancel }">
-                        <b-button size="sm" variant="default" @click="cancel()">
-                          Close
-                        </b-button>
-                      </template>
-                    </b-modal>
                   </td>
                   <td>
                     <b-button-group>
@@ -377,6 +346,40 @@
               </tbody>
             </table>
           </div>
+          <b-modal
+            id="view-work-photo"
+            centered
+            title="Instruction Photo"
+            size="lg"
+          >
+            <img
+              class="img-rounded"
+              :src="viewWorkPhotoUrl"
+              alt=""
+              height="500"
+            />
+            <template #modal-footer="{ cancel }">
+              <b-button size="sm" variant="default" @click="cancel()">
+                Close
+              </b-button>
+            </template>
+          </b-modal>
+          <b-modal
+            id="view-work-video"
+            centered
+            size="lg"
+            title="Instruction Video"
+          >
+            <my-video
+              :sources="viewWorkVideoSource"
+              :options="{ autoplay: true, volume: 1 }"
+            ></my-video>
+            <template #modal-footer="{ cancel }">
+              <b-button size="sm" variant="default" @click="cancel()">
+                Close
+              </b-button>
+            </template>
+          </b-modal>
           <b-modal id="add-work-modal" centered title="Add New Work Item">
             <b-form-group
               label="Item ID"
@@ -399,9 +402,6 @@
                     Auto Generate
                   </b-button>
                 </b-input-group-append>
-                <b-form-invalid-feedback :state="isAddWorkItemIDValid">
-                  Item ID is not valid
-                </b-form-invalid-feedback>
               </b-input-group>
             </b-form-group>
             <b-form-group
@@ -502,7 +502,7 @@
               <b-button size="sm" variant="default" @click="cancel()">
                 Cancel
               </b-button>
-              <b-button size="sm" variant="success" v-on:click="addWorkOrder()">
+              <b-button size="sm" variant="success" v-on:click="addWork()">
                 Add
               </b-button>
             </template>
@@ -679,7 +679,7 @@
 import Widget from "@/components/Widget/Widget";
 import Multiselect from "vue-multiselect";
 import vue2Dropzone from "vue2-dropzone";
-import myVideo from 'vue-video'
+import myVideo from "vue-video";
 
 export default {
   name: "ManagerDashboard",
@@ -700,13 +700,15 @@ export default {
           this.mngWorkList[i].instruction_video != undefined &&
           this.mngWorkList[i].instruction_video.length > 0
         ) {
-          this.mngWorkList[i].instruction_video = "/videos/" + this.mngWorkList[i].instruction_video;
+          this.mngWorkList[i].instruction_video =
+            "/videos/" + this.mngWorkList[i].instruction_video;
         }
         if (
           this.mngWorkList[i].instruction_photo != undefined &&
           this.mngWorkList[i].instruction_photo.length > 0
         ) {
-          this.mngWorkList[i].instruction_photo = "/images/" + this.mngWorkList[i].image;
+          this.mngWorkList[i].instruction_photo =
+            "/images/" + this.mngWorkList[i].instruction_photo;
         }
       }
       this.mngIDDropdownOptions = [];
@@ -811,7 +813,7 @@ export default {
     Widget,
     Multiselect,
     vueDropzone: vue2Dropzone,
-    myVideo
+    myVideo,
   },
   data() {
     return {
@@ -831,8 +833,8 @@ export default {
       addWorkInstructionPhotoUploaded: 0,
       addWorkInstructionVideo: null,
       addWorkInstructionVideoUploaded: 0,
-      viewWorkVideoSource: null, 
-      viewWorkPhotoUrl: null, 
+      viewWorkVideoSource: null,
+      viewWorkPhotoUrl: null,
 
       mngWorkList: [], // Work List
       mngIDDropdownOptions: [],
@@ -873,9 +875,9 @@ export default {
       this.addWorkDescription = "";
       this.addWorkInstructionText = "";
       this.addWorkInstructionPhoto = null;
-      this.addWorkInstructionPhotoUploaded = false;
+      this.addWorkInstructionPhotoUploaded = 0;
       this.addWorkInstructionVideo = null;
-      this.addWorkInstructionVideoUploaded = false;
+      this.addWorkInstructionVideoUploaded = 0;
 
       this.$bvModal.show("add-work-modal");
     },
@@ -913,42 +915,44 @@ export default {
         instruction_photo: this.addWorkInstructionPhoto,
         instruction_video: this.addWorkInstructionVideo,
       });
-      this.$bvModal.hide("add-work-order-modal");
+      this.$bvModal.hide("add-work-modal");
     },
     addWorkImageFileAdded: function () {
-      this.addWorkImageUploaded = false;
+      this.addWorkImageUploaded = 1;
     },
     addWorkImageFileUploaded: function (file) {
-      this.addWorkImageUploaded = true;
+      this.addWorkImageUploaded = 2;
       this.addWorkImage = file.name;
     },
     addWorkInstructionVideoFileAdded: function () {
-      this.addWorkInstructionVideoUploaded = false;
+      this.addWorkInstructionVideoUploaded = 1;
     },
     addWorkInstructionVideoFileUploaded: function (file) {
-      this.addWorkInstructionVideoUploaded = true;
+      this.addWorkInstructionVideoUploaded = 2;
       this.addWorkInstructionVideo = file.name;
     },
     addWorkInstructionPhotoFileAdded: function () {
-      this.addWorkInstructionPhotoUploaded = false;
+      this.addWorkInstructionPhotoUploaded = 1;
     },
     addWorkInstructionPhotoFileUploaded: function (file) {
-      this.addWorkInstructionPhotoUploaded = true;
+      this.addWorkInstructionPhotoUploaded = 2;
       this.addWorkInstructionPhoto = file.name;
     },
     viewWorkPhoto: function (photoUrl) {
       this.viewWorkPhotoUrl = null;
       this.viewWorkPhotoUrl = photoUrl;
       this.$bvModal.show("view-work-photo");
-    }, 
+    },
     viewWorkVideo: function (videoUrl) {
       this.viewWorkVideoSource = null;
-      this.viewWorkVideoSource = [{
-        src: videoUrl, 
-        type: 'video/mp4'
-      }];
+      this.viewWorkVideoSource = [
+        {
+          src: videoUrl,
+          type: "video/mp4",
+        },
+      ];
       this.$bvModal.show("view-work-video");
-    }, 
+    },
     showAddWorkOrderModal: function () {
       this.addWorkOrderID = null;
       this.addWorkOrderQuantity = "";
@@ -993,11 +997,6 @@ export default {
     },
     showMaterialsModal: function () {
       this.$bvModal.show("materials-modal");
-    },
-  },
-  computed: {
-    isAddWorkItemIDValid() {
-      return this.addWorkItemID.length == 20;
     },
   },
   mounted() {
