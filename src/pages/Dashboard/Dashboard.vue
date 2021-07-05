@@ -97,7 +97,7 @@
                 id="addWorkOrderID"
                 label="name"
                 placeholder="Select Item ID"
-                track-by="wid"
+                track-by="name"
                 v-model="addWorkOrderID"
                 :options="mngIDDropdownOptions"
               ></multiselect>
@@ -297,14 +297,12 @@
                 <tr v-for="row in mngWorkList" :key="row.id">
                   <td>{{ row.wid }}</td>
                   <td>
-                    <!-- <img
+                    <img
                       class="img-rounded"
-                      :src="
-                        require(`http://localhost:4000/uploads/images/${row.image}`)
-                      "
+                      :src="row.image"
                       alt=""
                       height="50"
-                    /> -->
+                    />
                   </td>
                   <td>
                     <p class="text-max-5-lines">{{ row.description }}</p>
@@ -319,6 +317,24 @@
                       v-on:click="viewWorkPhoto(row.instruction_photo)"
                       ><i class="fa fa-eye"></i>&nbsp; View</b-button
                     >
+                    <b-modal
+                      id="view-work-photo"
+                      centered
+                      title="Instruction Photo"
+                      size="lg"
+                    >
+                      <img
+                        class="img-rounded"
+                        :src="viewWorkPhoto"
+                        alt=""
+                        height="500"
+                      />
+                      <template #modal-footer="{ cancel }">
+                        <b-button size="sm" variant="default" @click="cancel()">
+                          Close
+                        </b-button>
+                      </template>
+                    </b-modal>
                   </td>
                   <td>
                     <b-button
@@ -327,6 +343,19 @@
                       v-on:click="viewWorkVideo(row.instruction_video)"
                       ><i class="fa fa-eye"></i>&nbsp; View</b-button
                     >
+                    <b-modal
+                      id="view-work-video"
+                      centered
+                      size="lg"
+                      title="Instruction Video"
+                    >
+                      <my-video :sources="viewWorkVideoSource" :options="{ autoplay: true, volume: 1}"></my-video>
+                      <template #modal-footer="{ cancel }">
+                        <b-button size="sm" variant="default" @click="cancel()">
+                          Close
+                        </b-button>
+                      </template>
+                    </b-modal>
                   </td>
                   <td>
                     <b-button-group>
@@ -362,10 +391,17 @@
                   trim
                 ></b-form-input>
                 <b-input-group-append>
-                  <b-button size="sm" variant="info">
+                  <b-button
+                    size="sm"
+                    variant="info"
+                    v-on:click="generateRandomWid()"
+                  >
                     Auto Generate
                   </b-button>
                 </b-input-group-append>
+                <b-form-invalid-feedback :state="isAddWorkItemIDValid">
+                  Item ID is not valid
+                </b-form-invalid-feedback>
               </b-input-group>
             </b-form-group>
             <b-form-group
@@ -378,14 +414,15 @@
                 :options="{
                   uploadMultiple: false,
                   maxFilesize: 4,
+                  url: 'http://localhost:4000/api/upload-image',
                   acceptdFiles: 'image/*',
-                  url: 'https://httpbin.org/post',
                   thumbnailWidth: 150,
                   thumbnailHeight: 150,
                   addRemoveLinks: true,
                 }"
                 :useCustomSlot="true"
                 v-on:vdropzone-file-added="addWorkImageFileAdded"
+                v-on:vdropzone-complete="addWorkImageFileUploaded"
               >
                 <div class="dz-message-content">Drag Image File To Upload</div>
               </vue-dropzone>
@@ -424,14 +461,16 @@
                 id="addWorkInstructionVideo"
                 :options="{
                   uploadMultiple: false,
-                  maxFilesize: 100,
+                  maxFilesize: 500,
                   acceptdFiles: 'video/*',
-                  url: 'https://httpbin.org/post',
+                  url: 'http://localhost:4000/api/upload-video',
                   thumbnailWidth: 150,
                   thumbnailHeight: 150,
                   addRemoveLinks: true,
                 }"
                 :useCustomSlot="true"
+                v-on:vdropzone-file-added="addWorkInstructionVideoFileAdded"
+                v-on:vdropzone-complete="addWorkInstructionVideoFileUploaded"
               >
                 <div class="dz-message-content">Drag Video File To Upload</div>
               </vue-dropzone>
@@ -447,12 +486,14 @@
                   uploadMultiple: false,
                   maxFilesize: 4,
                   acceptdFiles: 'image/*',
-                  url: 'https://httpbin.org/post',
+                  url: 'http://localhost:4000/api/upload-image',
                   thumbnailWidth: 150,
                   thumbnailHeight: 150,
                   addRemoveLinks: true,
                 }"
                 :useCustomSlot="true"
+                v-on:vdropzone-file-added="addWorkInstructionPhotoFileAdded"
+                v-on:vdropzone-complete="addWorkInstructionPhotoFileUploaded"
               >
                 <div class="dz-message-content">Drag Image File To Upload</div>
               </vue-dropzone>
@@ -638,6 +679,7 @@
 import Widget from "@/components/Widget/Widget";
 import Multiselect from "vue-multiselect";
 import vue2Dropzone from "vue2-dropzone";
+import myVideo from 'vue-video'
 
 export default {
   name: "ManagerDashboard",
@@ -647,7 +689,33 @@ export default {
       let helper = {};
       this.addWorkOrderID = null;
       this.mngWorkList = data.mngWorkList;
-      this.mngIDDropdownOptions = data.mngWorkList;
+      for (let i = 0; i < this.mngWorkList.length; i++) {
+        if (
+          this.mngWorkList[i].image != undefined &&
+          this.mngWorkList[i].image.length > 0
+        ) {
+          this.mngWorkList[i].image = "/images/" + this.mngWorkList[i].image;
+        }
+        if (
+          this.mngWorkList[i].instruction_video != undefined &&
+          this.mngWorkList[i].instruction_video.length > 0
+        ) {
+          this.mngWorkList[i].instruction_video = "/videos/" + this.mngWorkList[i].instruction_video;
+        }
+        if (
+          this.mngWorkList[i].instruction_photo != undefined &&
+          this.mngWorkList[i].instruction_photo.length > 0
+        ) {
+          this.mngWorkList[i].instruction_photo = "/images/" + this.mngWorkList[i].image;
+        }
+      }
+      this.mngIDDropdownOptions = [];
+      for (let i = 0; i < this.mngWorkList.length; i++) {
+        this.mngIDDropdownOptions.push({
+          value: this.mngWorkList[i].id,
+          name: this.mngWorkList[i].wid,
+        });
+      }
       this.addWorkOrderStation = null;
       this.mngWorkOrderList = data.mngWorkOrderList;
       this.mngWorkOrderListByStation = [];
@@ -743,6 +811,7 @@ export default {
     Widget,
     Multiselect,
     vueDropzone: vue2Dropzone,
+    myVideo
   },
   data() {
     return {
@@ -755,10 +824,15 @@ export default {
 
       addWorkItemID: "",
       addWorkImage: null,
+      addWorkImageUploaded: 0,
       addWorkDescription: "",
       addWorkInstructionText: "",
       addWorkInstructionPhoto: null,
+      addWorkInstructionPhotoUploaded: 0,
       addWorkInstructionVideo: null,
+      addWorkInstructionVideoUploaded: 0,
+      viewWorkVideoSource: null, 
+      viewWorkPhotoUrl: null, 
 
       mngWorkList: [], // Work List
       mngIDDropdownOptions: [],
@@ -780,33 +854,101 @@ export default {
     };
   },
   methods: {
+    generateRandomWid: function () {
+      let result = "";
+      const characters =
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+      const charactersLength = characters.length;
+      for (let i = 0; i < 20; i++) {
+        result += characters.charAt(
+          Math.floor(Math.random() * charactersLength)
+        );
+      }
+      this.addWorkItemID = result;
+    },
     showAddWorkModal: function () {
       this.addWorkItemID = "";
       this.addWorkImage = null;
+      this.addWorkImageUploaded = 0;
       this.addWorkDescription = "";
       this.addWorkInstructionText = "";
       this.addWorkInstructionPhoto = null;
+      this.addWorkInstructionPhotoUploaded = false;
       this.addWorkInstructionVideo = null;
+      this.addWorkInstructionVideoUploaded = false;
+
       this.$bvModal.show("add-work-modal");
     },
     addWork: function () {
-      let stations = [];
-      for (let i = 0; i < this.addWorkOrderStation.length; i++) {
-        stations.push(this.addWorkOrderStation[i].value);
+      if (this.addWorkItemID.length != 20) {
+        // eslint-disable-next-line no-console
+        console.log("Item ID is required.");
+        return;
       }
-      if (stations.length > 0) {
-        this.$socket.emit("addWorkOrder", {
-          work_id: this.addWorkOrderID.id,
-          qty: this.addWorkOrderQuantity,
-          station_ids: stations,
-        });
+      if (this.addWorkImageUploaded == 0) {
+        // eslint-disable-next-line no-console
+        console.log("This field is required.");
+        return;
       }
+      if (this.addWorkImageUploaded == 1) {
+        // eslint-disable-next-line no-console
+        console.log("Image file is being uploaded. Please wait...");
+        return;
+      }
+      if (this.addWorkInstructionVideoUploaded == 1) {
+        // eslint-disable-next-line no-console
+        console.log("Instruction Video file is being uploaded. Please wait...");
+        return;
+      }
+      if (this.addWorkInstructionPhotoUploaded == 1) {
+        // eslint-disable-next-line no-console
+        console.log("Instruction Photo file is being uploaded. Please wait...");
+        return;
+      }
+      this.$socket.emit("addWork", {
+        wid: this.addWorkItemID,
+        image: this.addWorkImage,
+        description: this.addWorkDescription,
+        instruction_text: this.addWorkInstructionText,
+        instruction_photo: this.addWorkInstructionPhoto,
+        instruction_video: this.addWorkInstructionVideo,
+      });
       this.$bvModal.hide("add-work-order-modal");
     },
-    addWorkImageFileAdded: function (file) {
-      console.log("addWorkImageFileAdded");
-      console.log(file);
+    addWorkImageFileAdded: function () {
+      this.addWorkImageUploaded = false;
     },
+    addWorkImageFileUploaded: function (file) {
+      this.addWorkImageUploaded = true;
+      this.addWorkImage = file.name;
+    },
+    addWorkInstructionVideoFileAdded: function () {
+      this.addWorkInstructionVideoUploaded = false;
+    },
+    addWorkInstructionVideoFileUploaded: function (file) {
+      this.addWorkInstructionVideoUploaded = true;
+      this.addWorkInstructionVideo = file.name;
+    },
+    addWorkInstructionPhotoFileAdded: function () {
+      this.addWorkInstructionPhotoUploaded = false;
+    },
+    addWorkInstructionPhotoFileUploaded: function (file) {
+      this.addWorkInstructionPhotoUploaded = true;
+      this.addWorkInstructionPhoto = file.name;
+    },
+    viewWorkPhoto: function (photoUrl) {
+      this.viewWorkPhotoUrl = null;
+      this.viewWorkPhotoUrl = photoUrl;
+      this.$bvModal.show("view-work-photo");
+    }, 
+    viewWorkVideo: function (videoUrl) {
+      this.viewWorkVideoSource = null;
+      this.viewWorkVideoSource = [{
+        src: videoUrl, 
+        type: 'video/mp4'
+      }];
+      this.$bvModal.show("view-work-video");
+    }, 
     showAddWorkOrderModal: function () {
       this.addWorkOrderID = null;
       this.addWorkOrderQuantity = "";
@@ -851,6 +993,11 @@ export default {
     },
     showMaterialsModal: function () {
       this.$bvModal.show("materials-modal");
+    },
+  },
+  computed: {
+    isAddWorkItemIDValid() {
+      return this.addWorkItemID.length == 20;
     },
   },
   mounted() {
