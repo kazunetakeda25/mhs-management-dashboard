@@ -21,7 +21,7 @@
         </b-form>
       </div>
       <footer class="pageFooter">
-        Light Blue Vue Admin Dashboard Template - Made by <a href="https://flatlogic.com" target="_blank">Flatlogic</a>
+        MHS Management Dashboard Demo- Made by <a href="https://koristuki.com" target="_blank">Koritsuki Entertainment</a>
       </footer>
     </b-container>
   </div>

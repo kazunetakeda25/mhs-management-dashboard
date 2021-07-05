@@ -354,12 +354,19 @@
               label-for="addWorkItemID"
               invalid-feedback="Input Item ID"
             >
-              <b-form-input
-                id="addWorkItemID"
-                type="text"
-                v-model="addWorkItemID"
-                trim
-              ></b-form-input>
+              <b-input-group>
+                <b-form-input
+                  id="addWorkItemID"
+                  type="text"
+                  v-model="addWorkItemID"
+                  trim
+                ></b-form-input>
+                <b-input-group-append>
+                  <b-button size="sm" variant="info">
+                    Auto Generate
+                  </b-button>
+                </b-input-group-append>
+              </b-input-group>
             </b-form-group>
             <b-form-group
               label="Image"
@@ -369,20 +376,18 @@
               <vue-dropzone
                 id="addWorkImage"
                 :options="{
+                  uploadMultiple: false,
+                  maxFilesize: 4,
+                  acceptdFiles: 'image/*',
                   url: 'https://httpbin.org/post',
-                  thumbnailWidth: 200,
+                  thumbnailWidth: 150,
+                  thumbnailHeight: 150,
                   addRemoveLinks: true,
                 }"
                 :useCustomSlot="true"
+                v-on:vdropzone-file-added="addWorkImageFileAdded"
               >
-                <div class="dropzone-custom-content">
-                  <h3 class="dropzone-custom-title">
-                    Drag and drop to upload content!
-                  </h3>
-                  <div class="subtitle">
-                    ...or click to select a file from your computer
-                  </div>
-                </div>
+                <div class="dz-message-content">Drag Image File To Upload</div>
               </vue-dropzone>
             </b-form-group>
             <b-form-group
@@ -402,12 +407,55 @@
               label-for="addWorkInstructionText"
               invalid-feedback="Input Instruction Text"
             >
-              <b-form-input
+              <b-form-textarea
                 id="addWorkInstructionText"
                 type="text"
                 v-model="addWorkInstructionText"
-                trim
-              ></b-form-input>
+                rows="5"
+                min-rows="5"
+              ></b-form-textarea>
+            </b-form-group>
+            <b-form-group
+              label="Instruction Video"
+              label-for="addWorkInstructionVideo"
+              invalid-feedback="Choose Video"
+            >
+              <vue-dropzone
+                id="addWorkInstructionVideo"
+                :options="{
+                  uploadMultiple: false,
+                  maxFilesize: 100,
+                  acceptdFiles: 'video/*',
+                  url: 'https://httpbin.org/post',
+                  thumbnailWidth: 150,
+                  thumbnailHeight: 150,
+                  addRemoveLinks: true,
+                }"
+                :useCustomSlot="true"
+              >
+                <div class="dz-message-content">Drag Video File To Upload</div>
+              </vue-dropzone>
+            </b-form-group>
+            <b-form-group
+              label="Instruction Photo"
+              label-for="addWorkInstructionPhoto"
+              invalid-feedback="Choose Image"
+            >
+              <vue-dropzone
+                id="addWorkInstructionPhoto"
+                :options="{
+                  uploadMultiple: false,
+                  maxFilesize: 4,
+                  acceptdFiles: 'image/*',
+                  url: 'https://httpbin.org/post',
+                  thumbnailWidth: 150,
+                  thumbnailHeight: 150,
+                  addRemoveLinks: true,
+                }"
+                :useCustomSlot="true"
+              >
+                <div class="dz-message-content">Drag Image File To Upload</div>
+              </vue-dropzone>
             </b-form-group>
             <template #modal-footer="{ cancel }">
               <b-button size="sm" variant="default" @click="cancel()">
@@ -589,6 +637,7 @@
 <script>
 import Widget from "@/components/Widget/Widget";
 import Multiselect from "vue-multiselect";
+import vue2Dropzone from "vue2-dropzone";
 
 export default {
   name: "ManagerDashboard",
@@ -693,6 +742,7 @@ export default {
   components: {
     Widget,
     Multiselect,
+    vueDropzone: vue2Dropzone,
   },
   data() {
     return {
@@ -702,6 +752,13 @@ export default {
       email: "",
       role: "",
       stationName: "",
+
+      addWorkItemID: "",
+      addWorkImage: null,
+      addWorkDescription: "",
+      addWorkInstructionText: "",
+      addWorkInstructionPhoto: null,
+      addWorkInstructionVideo: null,
 
       mngWorkList: [], // Work List
       mngIDDropdownOptions: [],
@@ -724,7 +781,7 @@ export default {
   },
   methods: {
     showAddWorkModal: function () {
-      this.addWorkID = "";
+      this.addWorkItemID = "";
       this.addWorkImage = null;
       this.addWorkDescription = "";
       this.addWorkInstructionText = "";
@@ -745,6 +802,10 @@ export default {
         });
       }
       this.$bvModal.hide("add-work-order-modal");
+    },
+    addWorkImageFileAdded: function (file) {
+      console.log("addWorkImageFileAdded");
+      console.log(file);
     },
     showAddWorkOrderModal: function () {
       this.addWorkOrderID = null;
@@ -807,3 +868,4 @@ export default {
 
 <style src="./Dashboard.scss" lang="scss" />
 <style src="./multiselect.css" lang="css" />
+<style src="./dropzone.css" lang="css" />
