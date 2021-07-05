@@ -38,13 +38,11 @@
               </thead>
               <tbody>
                 <tr v-for="row in mngWorkOrderList" :key="row.id">
-                  <td>{{ row.work_id }}</td>
+                  <td>{{ row.wid }}</td>
                   <td>
                     <img
                       class="img-rounded"
-                      :src="
-                        require(`../../assets/tables/${(row.id % 5) + 1}.jpg`)
-                      "
+                      :src="row.image"
                       alt=""
                       height="50"
                     />
@@ -543,9 +541,7 @@
                   <td>
                     <img
                       class="img-rounded"
-                      :src="
-                        require(`../../assets/tables/${(row.id % 5) + 1}.jpg`)
-                      "
+                      :src="row.image"
                       alt=""
                       height="30"
                     />
@@ -720,6 +716,15 @@ export default {
       }
       this.addWorkOrderStation = null;
       this.mngWorkOrderList = data.mngWorkOrderList;
+      for (let i = 0; i < this.mngWorkOrderList.length; i++) {
+        if (
+          this.mngWorkOrderList[i].image != undefined &&
+          this.mngWorkOrderList[i].image.length > 0
+        ) {
+          this.mngWorkOrderList[i].image =
+            "/images/" + this.mngWorkOrderList[i].image;
+        }
+      }
       this.mngWorkOrderListByStation = [];
       this.mngWorkOrderListByStation = this.mngWorkOrderList.reduce(function (
         r,
@@ -966,7 +971,7 @@ export default {
       }
       if (stations.length > 0) {
         this.$socket.emit("addWorkOrder", {
-          work_id: this.addWorkOrderID.id,
+          work_id: this.addWorkOrderID.value,
           qty: this.addWorkOrderQuantity,
           station_ids: stations,
         });
