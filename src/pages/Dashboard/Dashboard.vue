@@ -329,7 +329,17 @@
                       <b-button
                         size="sm"
                         variant="primary"
-                        v-on:click="showWorkEditModal(row.id)"
+                        v-on:click="
+                          showWorkEditModal({
+                            id: row.id,
+                            wid: row.wid,
+                            image: row.image,
+                            description: row.description,
+                            instruction_text: row.instruction_text,
+                            instruction_photo: row.instruction_photo,
+                            instruction_video: row.instruction_video,
+                          })
+                        "
                         ><i class="fa fa-edit"></i
                       ></b-button>
                       <b-button
@@ -502,6 +512,134 @@
               </b-button>
               <b-button size="sm" variant="success" v-on:click="addWork()">
                 Add
+              </b-button>
+            </template>
+          </b-modal>
+          <b-modal id="edit-work-modal" centered title="Edit Work Item">
+            <input type="hidden" name="foo" id="editWorkID" :value="editWorkID">
+            <b-form-group
+              label="Item ID"
+              label-for="editWorkItemID"
+              invalid-feedback="Input Item ID"
+            >
+              <b-input-group>
+                <b-form-input
+                  id="editWorkItemID"
+                  type="text"
+                  v-model="editWorkItemID"
+                  trim
+                ></b-form-input>
+                <b-input-group-append>
+                  <b-button
+                    size="sm"
+                    variant="info"
+                    v-on:click="generateRandomWid()"
+                  >
+                    Auto Generate
+                  </b-button>
+                </b-input-group-append>
+              </b-input-group>
+            </b-form-group>
+            <b-form-group
+              label="Image"
+              label-for="editWorkImage"
+              invalid-feedback="Choose Image"
+            >
+              <vue-dropzone
+                id="editWorkImage"
+                :options="{
+                  uploadMultiple: false,
+                  maxFilesize: 4,
+                  url: 'http://localhost:4000/api/upload-image',
+                  acceptdFiles: 'image/*',
+                  thumbnailWidth: 150,
+                  thumbnailHeight: 150,
+                  addRemoveLinks: true,
+                }"
+                :useCustomSlot="true"
+                v-on:vdropzone-file-added="editWorkImageFileAdded"
+                v-on:vdropzone-complete="editWorkImageFileUploaded"
+              >
+                <div class="dz-message-content">Drag Image File To Upload</div>
+              </vue-dropzone>
+            </b-form-group>
+            <b-form-group
+              label="Description"
+              label-for="editWorkDescription"
+              invalid-feedback="Input Description"
+            >
+              <b-form-input
+                id="editWorkDescription"
+                type="text"
+                v-model="editWorkDescription"
+                trim
+              ></b-form-input>
+            </b-form-group>
+            <b-form-group
+              label="Instruction Text"
+              label-for="editWorkInstructionText"
+              invalid-feedback="Input Instruction Text"
+            >
+              <b-form-textarea
+                id="editWorkInstructionText"
+                type="text"
+                v-model="editWorkInstructionText"
+                rows="5"
+                min-rows="5"
+              ></b-form-textarea>
+            </b-form-group>
+            <b-form-group
+              label="Instruction Video"
+              label-for="editWorkInstructionVideo"
+              invalid-feedback="Choose Video"
+            >
+              <vue-dropzone
+                id="editWorkInstructionVideo"
+                :options="{
+                  uploadMultiple: false,
+                  maxFilesize: 500,
+                  acceptdFiles: 'video/*',
+                  url: 'http://localhost:4000/api/upload-video',
+                  thumbnailWidth: 150,
+                  thumbnailHeight: 150,
+                  addRemoveLinks: true,
+                }"
+                :useCustomSlot="true"
+                v-on:vdropzone-file-added="editWorkInstructionVideoFileAdded"
+                v-on:vdropzone-complete="editWorkInstructionVideoFileUploaded"
+              >
+                <div class="dz-message-content">Drag Video File To Upload</div>
+              </vue-dropzone>
+            </b-form-group>
+            <b-form-group
+              label="Instruction Photo"
+              label-for="editWorkInstructionPhoto"
+              invalid-feedback="Choose Image"
+            >
+              <vue-dropzone
+                id="editWorkInstructionPhoto"
+                :options="{
+                  uploadMultiple: false,
+                  maxFilesize: 4,
+                  acceptdFiles: 'image/*',
+                  url: 'http://localhost:4000/api/upload-image',
+                  thumbnailWidth: 150,
+                  thumbnailHeight: 150,
+                  addRemoveLinks: true,
+                }"
+                :useCustomSlot="true"
+                v-on:vdropzone-file-added="editWorkInstructionPhotoFileAdded"
+                v-on:vdropzone-complete="editWorkInstructionPhotoFileUploaded"
+              >
+                <div class="dz-message-content">Drag Image File To Upload</div>
+              </vue-dropzone>
+            </b-form-group>
+            <template #modal-footer="{ cancel }">
+              <b-button size="sm" variant="default" @click="cancel()">
+                Cancel
+              </b-button>
+              <b-button size="sm" variant="success" v-on:click="editWork()">
+                Update
               </b-button>
             </template>
           </b-modal>
@@ -841,6 +979,17 @@ export default {
       viewWorkVideoSource: null,
       viewWorkPhotoUrl: null,
 
+      editWorkID: "",
+      editWorkItemID: "",
+      editWorkImage: null,
+      editWorkImageUploaded: 0,
+      editWorkDescription: "",
+      editWorkInstructionText: "",
+      editWorkInstructionPhoto: null,
+      editWorkInstructionPhotoUploaded: 0,
+      editWorkInstructionVideo: null,
+      editWorkInstructionVideoUploaded: 0,
+
       mngWorkList: [], // Work List
       mngIDDropdownOptions: [],
       mngWorkOrderList: [], // Work Order List
@@ -942,6 +1091,94 @@ export default {
     addWorkInstructionPhotoFileUploaded: function (file) {
       this.addWorkInstructionPhotoUploaded = 2;
       this.addWorkInstructionPhoto = file.name;
+    },
+    showWorkEditModal: function (data) {
+      this.editWorkID = "";
+      this.editWorkID = data.id;
+      this.editWorkItemID = data.wid;
+      this.editWorkImage = data.image;
+      this.editWorkImageUploaded = 0;
+      this.editWorkDescription = data.description;
+      this.editWorkInstructionText = data.instruction_text;
+      this.editWorkInstructionPhoto = data.instruction_photo;
+      this.editWorkInstructionVideo = data.instruction_video;
+      this.editWorkInstructionPhotoUploaded = 0;
+      this.editWorkInstructionVideoUploaded = 0;
+
+      this.$bvModal.show("edit-work-modal");
+    },
+    editWork: function () {
+      if (this.editWorkID.length == 0) {
+        // eslint-disable-next-line no-console
+        console.log("ID is required.");
+        return;
+      }
+      if (this.editWorkItemID.length != 20) {
+        // eslint-disable-next-line no-console
+        console.log("Item ID is required.");
+        return;
+      }
+      if (this.editWorkItemID.length != 20) {
+        // eslint-disable-next-line no-console
+        console.log("Item ID is required.");
+        return;
+      }
+      if (this.editWorkImageUploaded == 1) {
+        // eslint-disable-next-line no-console
+        console.log("Image file is being uploaded. Please wait...");
+        return;
+      }
+      if (this.editWorkInstructionVideoUploaded == 1) {
+        // eslint-disable-next-line no-console
+        console.log("Instruction Video file is being uploaded. Please wait...");
+        return;
+      }
+      if (this.editWorkInstructionPhotoUploaded == 1) {
+        // eslint-disable-next-line no-console
+        console.log("Instruction Photo file is being uploaded. Please wait...");
+        return;
+      }
+      this.$socket.emit("editWork", {
+        id: this.editWorkID,
+        wid: this.editWorkItemID,
+        image: this.editWorkImageUploaded == 2 ? this.editWorkImage : "",
+        description: this.editWorkDescription,
+        instruction_text: this.editWorkInstructionText,
+        instruction_photo: this.editWorkInstructionPhotoUploaded == 2 ? this.editWorkInstructionPhoto : "",
+        instruction_video: this.editWorkInstructionVideoUploaded == 2 ? this.editWorkInstructionVideo : "",
+      });
+      this.$bvModal.hide("edit-work-modal");
+    },
+    deleteWork: function (id) {
+      if (id == undefined || id.length == 0) {
+        // eslint-disable-next-line no-console
+        console.log("ID is required.");
+        return;
+      }
+      this.$socket.emit("deleteWork", {
+        id: id,
+      });
+    },
+    editWorkImageFileAdded: function () {
+      this.editWorkImageUploaded = 1;
+    },
+    editWorkImageFileUploaded: function (file) {
+      this.editWorkImageUploaded = 2;
+      this.editWorkImage = file.name;
+    },
+    editWorkInstructionVideoFileAdded: function () {
+      this.editWorkInstructionVideoUploaded = 1;
+    },
+    editWorkInstructionVideoFileUploaded: function (file) {
+      this.editWorkInstructionVideoUploaded = 2;
+      this.editWorkInstructionVideo = file.name;
+    },
+    editWorkInstructionPhotoFileAdded: function () {
+      this.editWorkInstructionPhotoUploaded = 1;
+    },
+    editWorkInstructionPhotoFileUploaded: function (file) {
+      this.editWorkInstructionPhotoUploaded = 2;
+      this.editWorkInstructionPhoto = file.name;
     },
     viewWorkPhoto: function (photoUrl) {
       this.viewWorkPhotoUrl = null;
