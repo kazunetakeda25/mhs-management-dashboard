@@ -675,7 +675,7 @@
               </thead>
               <tbody>
                 <tr v-for="row in assWorkOrderList" :key="row.id">
-                  <td>{{ row.work_id }}</td>
+                  <td>{{ row.wid }}</td>
                   <td>
                     <img
                       class="img-rounded"
@@ -724,7 +724,7 @@
           <div class="d-flex justify-content-between">
             <h3>
               <span class="fw-semi-bold"
-                >Item: {{ assSubWorkOrderInProgress.work_id }} ({{
+                >Item: {{ assSubWorkOrderInProgress.wid }} ({{
                   assSubWorkOrderInProgress.sub_work_order_id
                 }})</span
               >
@@ -734,10 +734,10 @@
             >
           </div>
           <div class="clearfix pt-4 pb-2">
-            <p>{{ assSubWorkOrderInProgress.instruction_text }}</p>
+            <p>{{ assSubWorkOrderInProgress.description }}</p>
           </div>
           <img
-            src="../../assets/people/1.png"
+            :src="assSubWorkOrderInProgress.instruction_photo"
             alt="..."
             style="width: 100%; max-width: 450px"
           />
@@ -902,6 +902,7 @@ export default {
       this.assSubWorkOrderList = [];
       if (this.role == "Assembler") {
         this.assSubWorkOrderList = data.assSubWorkOrderList;
+        console.log(this.assSubWorkOrderList)
       }
       this.assSubWorkOrderInProgress = {};
       if (
@@ -991,7 +992,7 @@ export default {
       editWorkInstructionVideoUploaded: 0,
 
       mngWorkList: [], // Work List
-      mngIDDropdownOptions: [],
+      mngIDDropdownOptions: [], 
       mngWorkOrderList: [], // Work Order List
       mngWorkOrderListByStation: [],
       mngStationList: [], // Station List
