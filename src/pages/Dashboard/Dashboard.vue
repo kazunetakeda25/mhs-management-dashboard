@@ -364,7 +364,7 @@
               class="img-rounded"
               :src="viewWorkPhotoUrl"
               alt=""
-              height="500"
+              style="width: 100%; height: auto; max-height: 500px"
             />
             <template #modal-footer="{ cancel }">
               <b-button size="sm" variant="default" @click="cancel()">
@@ -394,23 +394,12 @@
               label-for="addWorkItemID"
               invalid-feedback="Input Item ID"
             >
-              <b-input-group>
-                <b-form-input
-                  id="addWorkItemID"
-                  type="text"
-                  v-model="addWorkItemID"
-                  trim
-                ></b-form-input>
-                <b-input-group-append>
-                  <b-button
-                    size="sm"
-                    variant="info"
-                    v-on:click="generateRandomWid()"
-                  >
-                    Auto Generate
-                  </b-button>
-                </b-input-group-append>
-              </b-input-group>
+              <b-form-input
+                id="addWorkItemID"
+                type="text"
+                v-model="addWorkItemID"
+                trim
+              ></b-form-input>
             </b-form-group>
             <b-form-group
               label="Image"
@@ -516,29 +505,23 @@
             </template>
           </b-modal>
           <b-modal id="edit-work-modal" centered title="Edit Work Item">
-            <input type="hidden" name="foo" id="editWorkID" :value="editWorkID">
+            <input
+              type="hidden"
+              name="foo"
+              id="editWorkID"
+              :value="editWorkID"
+            />
             <b-form-group
               label="Item ID"
               label-for="editWorkItemID"
               invalid-feedback="Input Item ID"
             >
-              <b-input-group>
-                <b-form-input
-                  id="editWorkItemID"
-                  type="text"
-                  v-model="editWorkItemID"
-                  trim
-                ></b-form-input>
-                <b-input-group-append>
-                  <b-button
-                    size="sm"
-                    variant="info"
-                    v-on:click="generateRandomWid()"
-                  >
-                    Auto Generate
-                  </b-button>
-                </b-input-group-append>
-              </b-input-group>
+              <b-form-input
+                id="editWorkItemID"
+                type="text"
+                v-model="editWorkItemID"
+                trim
+              ></b-form-input>
             </b-form-group>
             <b-form-group
               label="Image"
@@ -902,7 +885,7 @@ export default {
       this.assSubWorkOrderList = [];
       if (this.role == "Assembler") {
         this.assSubWorkOrderList = data.assSubWorkOrderList;
-        console.log(this.assSubWorkOrderList)
+        console.log(this.assSubWorkOrderList);
       }
       this.assSubWorkOrderInProgress = {};
       if (
@@ -992,7 +975,7 @@ export default {
       editWorkInstructionVideoUploaded: 0,
 
       mngWorkList: [], // Work List
-      mngIDDropdownOptions: [], 
+      mngIDDropdownOptions: [],
       mngWorkOrderList: [], // Work Order List
       mngWorkOrderListByStation: [],
       mngStationList: [], // Station List
@@ -1011,18 +994,6 @@ export default {
     };
   },
   methods: {
-    generateRandomWid: function () {
-      let result = "";
-      const characters =
-        "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-      const charactersLength = characters.length;
-      for (let i = 0; i < 20; i++) {
-        result += characters.charAt(
-          Math.floor(Math.random() * charactersLength)
-        );
-      }
-      this.addWorkItemID = result;
-    },
     showAddWorkModal: function () {
       this.addWorkItemID = "";
       this.addWorkImage = null;
@@ -1145,8 +1116,14 @@ export default {
         image: this.editWorkImageUploaded == 2 ? this.editWorkImage : "",
         description: this.editWorkDescription,
         instruction_text: this.editWorkInstructionText,
-        instruction_photo: this.editWorkInstructionPhotoUploaded == 2 ? this.editWorkInstructionPhoto : "",
-        instruction_video: this.editWorkInstructionVideoUploaded == 2 ? this.editWorkInstructionVideo : "",
+        instruction_photo:
+          this.editWorkInstructionPhotoUploaded == 2
+            ? this.editWorkInstructionPhoto
+            : "",
+        instruction_video:
+          this.editWorkInstructionVideoUploaded == 2
+            ? this.editWorkInstructionVideo
+            : "",
       });
       this.$bvModal.hide("edit-work-modal");
     },
