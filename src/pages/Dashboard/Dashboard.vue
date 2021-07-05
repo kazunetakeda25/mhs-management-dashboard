@@ -1008,7 +1008,7 @@ export default {
       this.$bvModal.show("add-work-modal");
     },
     addWork: function () {
-      if (this.addWorkItemID.length != 20) {
+      if (this.addWorkItemID.length == 0) {
         // eslint-disable-next-line no-console
         console.log("Item ID is required.");
         return;
@@ -1085,12 +1085,7 @@ export default {
         console.log("ID is required.");
         return;
       }
-      if (this.editWorkItemID.length != 20) {
-        // eslint-disable-next-line no-console
-        console.log("Item ID is required.");
-        return;
-      }
-      if (this.editWorkItemID.length != 20) {
+      if (this.editWorkItemID.length == 0) {
         // eslint-disable-next-line no-console
         console.log("Item ID is required.");
         return;
