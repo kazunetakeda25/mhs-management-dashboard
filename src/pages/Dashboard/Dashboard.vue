@@ -465,48 +465,37 @@
                   </b-button>
                 </b-col>
               </b-row>
-              <b-form-row v-for="row in addWorkMaterialList" :key="row.id">
+              <b-form-row v-for="row in addWorkMaterialList" :key="row.id" class="my-2">
                 <b-col>
-                  <b-form-group
-                    label="ID"
-                    :label-for="'addWorkMaterialID' + row.id"
-                    invalid-feedback="Input Material ID"
+                  <Dropdown
+                    :options="addWorkMaterialDropdownOptions"
+                    v-on:selected="addWorkMaterialSelected(row.id)"
+                    v-model="row.addWorkMaterialID"
+                    :maxItem="10"
+                    page="Dashboard"
+                    :id="'addWorkMaterialID' + row.id"
+                    placeholder="Select Material ID"
                   >
-                    <Dropdown
-                      :options="addWorkMaterialDropdownOptions"
-                      v-on:selected="addWorkMaterialSelected(row.id)"
-                      v-model="row.addWorkMaterialID"
-                      :maxItem="10"
-                      page="Dashboard"
-                      :id="'addWorkMaterialID' + row.id"
-                      placeholder="Select Material"
-                    >
-                    </Dropdown>
-                  </b-form-group>
+                  </Dropdown>
                 </b-col>
                 <b-col>
-                  <b-form-group
-                    label="QTY"
-                    :label-for="'addWorkMaterialQty' + row.id"
-                    invalid-feedback="Input Material Qty"
-                  >
-                    <b-input-group>
-                      <b-form-input
-                        :id="'addWorkMaterialQty' + row.id"
-                        type="number"
-                        v-model="row.addWorkMaterialQty"
-                      ></b-form-input>
-                      <b-input-group-append>
-                        <b-button
-                          size="xs"
-                          variant="danger"
-                          v-on:click="addWorkRemoveMaterial()"
-                        >
-                          <i class="fa fa-trash"></i>
-                        </b-button>
-                      </b-input-group-append>
-                    </b-input-group>
-                  </b-form-group>
+                  <b-input-group>
+                    <b-form-input
+                      :id="'addWorkMaterialQty' + row.id"
+                      type="number"
+                      placeholder="Qty"
+                      v-model="row.addWorkMaterialQty"
+                    ></b-form-input>
+                    <b-input-group-append>
+                      <b-button
+                        size="xs"
+                        variant="danger"
+                        v-on:click="addWorkRemoveMaterial()"
+                      >
+                        <i class="fa fa-trash"></i>
+                      </b-button>
+                    </b-input-group-append>
+                  </b-input-group>
                 </b-col>
               </b-form-row>
             </div>
@@ -717,7 +706,7 @@
       <br />
       <br />
       <b-row>
-        <b-col xs="12" lg="6" class="mb-5">
+        <b-col xs="12" lg="4" class="mb-5">
           <div class="d-flex justify-content-between">
             <h3><span class="fw-semi-bold">Work Order List</span></h3>
             <b-button variant="info" size="sm">Parts Request</b-button>
@@ -729,10 +718,9 @@
             <table class="table table-hover">
               <thead>
                 <tr>
-                  <th>ID</th>
+                  <th>Item ID</th>
                   <th>Image</th>
-                  <th>Qty Remaining</th>
-                  <th>Status</th>
+                  <th>Qty</th>
                 </tr>
               </thead>
               <tbody>
@@ -749,29 +737,6 @@
                   <td>
                     {{ row.qty - row.qty_completed - row.qty_in_progress }}
                   </td>
-                  <td>
-                    <b-badge
-                      v-if="row.qty_completed == row.qty"
-                      variant="success"
-                      pill
-                      >Completed</b-badge
-                    >
-                    <b-badge
-                      v-if="
-                        row.qty_completed < row.qty &&
-                        (row.qty_completed > 0 || row.qty_in_progress > 0)
-                      "
-                      variant="info"
-                      pill
-                      >In Progress</b-badge
-                    >
-                    <b-badge
-                      v-if="row.qty_completed == 0 && row.qty_in_progress == 0"
-                      variant="gray"
-                      pill
-                      >Pending</b-badge
-                    >
-                  </td>
                 </tr>
               </tbody>
             </table>
@@ -780,17 +745,16 @@
         <b-col
           v-if="Object.keys(assSubWorkOrderInProgress).length > 0"
           xs="12"
-          lg="6"
+          lg="8"
           class="mb-5"
         >
           <div class="d-flex justify-content-between">
             <h3>
-              <span class="fw-semi-bold">Item In Progress: </span>
-              <span
-                >{{ assSubWorkOrderInProgress.wid }} ({{
-                  assSubWorkOrderInProgress.sub_work_order_id
-                }})</span
-              >
+              <span>{{ assSubWorkOrderInProgress.wid }}</span>
+              <p style="font-size: 1rem">
+                <br />Sequence Number:
+                {{ assSubWorkOrderInProgress.sub_work_order_id }}
+              </p>
             </h3>
             <b-button variant="success" size="sm" v-on:click="markAsComplete()"
               >Mark as Complete</b-button
@@ -1083,7 +1047,7 @@ export default {
         {
           id: 1,
           addWorkMaterialID: null,
-          addWorkMaterialQty: 0,
+          addWorkMaterialQty: null,
         },
       ],
       addWorkMaterialDropdownOptions: [
@@ -1130,7 +1094,7 @@ export default {
     };
   },
   methods: {
-    addWorkMaterialSelected: function(id) {
+    addWorkMaterialSelected: function (id) {
       console.log(id);
     },
     addWorkAddMaterial: function () {
@@ -1138,7 +1102,7 @@ export default {
       this.addWorkMaterialList.push({
         id: count + 1,
         addWorkMaterialID: null,
-        addWorkMaterialQty: 0,
+        addWorkMaterialQty: null,
       });
     },
     showAddWorkModal: function () {
