@@ -455,29 +455,30 @@
                   <label for="addWorkMaterials">Materials</label>
                 </b-col>
                 <b-col class="d-flex justify-content-end align-items-center">
-                  <b-button size="xs" variant="info" class="float-right">
+                  <b-button
+                    size="xs"
+                    variant="info"
+                    class="float-right"
+                    v-on:click="addWorkAddMaterial()"
+                  >
                     Add
                   </b-button>
                 </b-col>
               </b-row>
-              <b-form-row>
+              <b-form-row v-for="row in addWorkMaterialList" :key="row.id">
                 <b-col>
                   <b-form-group
                     label="ID"
-                    label-for="addWorkMaterialID"
+                    :label-for="'addWorkMaterialID' + row.id"
                     invalid-feedback="Input Material ID"
                   >
                     <Dropdown
-                      :options="[
-                        { id: 1, name: 'Option 1' },
-                        { id: 2, name: 'Option 2' },
-                      ]"
-                      v-on:selected="addWorkMaterialID"
-                      v-on:filter="getDropdownValues"
-                      :disabled="false"
+                      :options="addWorkMaterialDropdownOptions"
+                      v-on:selected="addWorkMaterialSelected(row.id)"
+                      v-model="row.addWorkMaterialID"
                       :maxItem="10"
                       page="Dashboard"
-                      id="addWorkMaterialID"
+                      :id="'addWorkMaterialID' + row.id"
                       placeholder="Select Material"
                     >
                     </Dropdown>
@@ -486,51 +487,25 @@
                 <b-col>
                   <b-form-group
                     label="QTY"
-                    label-for="addWorkMaterialQty"
+                    :label-for="'addWorkMaterialQty' + row.id"
                     invalid-feedback="Input Material Qty"
                   >
-                    <b-form-input
-                      id="addWorkMaterialQty"
-                      type="number"
-                      v-model="addWorkMaterialQty"
-                    ></b-form-input>
-                  </b-form-group>
-                </b-col>
-              </b-form-row>
-              <b-form-row>
-                <b-col>
-                  <b-form-group
-                    label="ID"
-                    label-for="addWorkMaterialID"
-                    invalid-feedback="Input Material ID"
-                  >
-                    <Dropdown
-                      :options="[
-                        { id: 1, name: 'Option 1' },
-                        { id: 2, name: 'Option 2' },
-                      ]"
-                      v-on:selected="addWorkMaterialID"
-                      v-on:filter="getDropdownValues"
-                      :disabled="false"
-                      :maxItem="10"
-                      page="Dashboard"
-                      id="addWorkMaterialID"
-                      placeholder="Select Material"
-                    >
-                    </Dropdown>
-                  </b-form-group>
-                </b-col>
-                <b-col>
-                  <b-form-group
-                    label="QTY"
-                    label-for="addWorkMaterialQty"
-                    invalid-feedback="Input Material Qty"
-                  >
-                    <b-form-input
-                      id="addWorkMaterialQty"
-                      type="number"
-                      v-model="addWorkMaterialQty"
-                    ></b-form-input>
+                    <b-input-group>
+                      <b-form-input
+                        :id="'addWorkMaterialQty' + row.id"
+                        type="number"
+                        v-model="row.addWorkMaterialQty"
+                      ></b-form-input>
+                      <b-input-group-append>
+                        <b-button
+                          size="xs"
+                          variant="danger"
+                          v-on:click="addWorkRemoveMaterial()"
+                        >
+                          <i class="fa fa-trash"></i>
+                        </b-button>
+                      </b-input-group-append>
+                    </b-input-group>
                   </b-form-group>
                 </b-col>
               </b-form-row>
@@ -918,11 +893,11 @@
 </template>
 
 <script>
-import Widget from "@/components/Widget/Widget";
-import Multiselect from "vue-multiselect";
-import vue2Dropzone from "vue2-dropzone";
 import Dropdown from "vue-simple-search-dropdown";
+import Multiselect from "vue-multiselect";
 import myVideo from "vue-video";
+import Widget from "@/components/Widget/Widget";
+import vue2Dropzone from "vue2-dropzone";
 
 export default {
   name: "ManagerDashboard",
@@ -1085,11 +1060,11 @@ export default {
     },
   },
   components: {
-    Widget,
-    Multiselect,
-    vueDropzone: vue2Dropzone,
-    myVideo,
     Dropdown,
+    Multiselect,
+    myVideo,
+    Widget,
+    vueDropzone: vue2Dropzone,
   },
   data() {
     return {
@@ -1104,6 +1079,17 @@ export default {
       addWorkImage: null,
       addWorkImageUploaded: 0,
       addWorkDescription: "",
+      addWorkMaterialList: [
+        {
+          id: 1,
+          addWorkMaterialID: null,
+          addWorkMaterialQty: 0,
+        },
+      ],
+      addWorkMaterialDropdownOptions: [
+        { id: 1, name: "Option 1" },
+        { id: 2, name: "Option 2" },
+      ],
       addWorkInstructionText: "",
       addWorkInstructionPhoto: null,
       addWorkInstructionPhotoUploaded: 0,
@@ -1144,6 +1130,17 @@ export default {
     };
   },
   methods: {
+    addWorkMaterialSelected: function(id) {
+      console.log(id);
+    },
+    addWorkAddMaterial: function () {
+      const count = this.addWorkMaterialList.length;
+      this.addWorkMaterialList.push({
+        id: count + 1,
+        addWorkMaterialID: null,
+        addWorkMaterialQty: 0,
+      });
+    },
     showAddWorkModal: function () {
       this.addWorkItemID = "";
       this.addWorkImage = null;
@@ -1158,6 +1155,7 @@ export default {
       this.$bvModal.show("add-work-modal");
     },
     addWork: function () {
+      console.log(this.addWorkMaterialList);
       if (this.addWorkItemID.length == 0) {
         // eslint-disable-next-line no-console
         console.log("Item ID is required.");
@@ -1385,6 +1383,6 @@ export default {
 </script>
 
 <style src="./Dashboard.scss" lang="scss" />
-<style src="./multiselect.css" lang="css" />
 <style src="./Dropdown.scss" lang="scss" />
-<style src="./dropzone.css" lang="css" />
+<style src="./Dropzone.css" lang="css" />
+<style src="./Multiselect.css" lang="css" />
