@@ -8344,6 +8344,11 @@ vue-router@^3.5.1:
   resolved "https://registry.yarnpkg.com/vue-router/-/vue-router-3.5.2.tgz#5f55e3f251970e36c3e8d88a7cd2d67a350ade5c"
   integrity sha512-807gn82hTnjCYGrnF3eNmIw/dk7/GE4B5h69BlyCK9KHASwSloD1Sjcn06zg9fVG4fYH2DrsNBZkpLtb25WtaQ==
 
+vue-simple-search-dropdown@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/vue-simple-search-dropdown/-/vue-simple-search-dropdown-1.0.1.tgz#72c6910122d09167d399653b88378e9e81098af0"
+  integrity sha512-r3LuGFB3WqMDRILx+Z/Y2S9UTLqMh3Y0nv1Oly+tt8oEzvg77r0tfYLHVqQlhsmVPy0GmSuxMMbetMkDRLOEqg==
+
 vue-socket.io@^3.0.10:
   version "3.0.10"
   resolved "https://registry.yarnpkg.com/vue-socket.io/-/vue-socket.io-3.0.10.tgz#76135bf5043baf484c648636a7a9822b4c11c084"

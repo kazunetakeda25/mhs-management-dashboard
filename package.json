@@ -36,6 +36,7 @@
     "vue-echarts": "^4.1.0",
     "vue-multiselect": "^2.1.6",
     "vue-router": "^3.5.1",
+    "vue-simple-search-dropdown": "^1.0.1",
     "vue-socket.io": "^3.0.10",
     "vue-toasted": "^1.1.28",
     "vue-video": "^0.1.7",

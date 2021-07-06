@@ -82,6 +82,7 @@
             </table>
           </div>
           <b-modal
+            no-close-on-backdrop
             id="add-work-order-modal"
             centered
             title="Add New Work Order"
@@ -166,7 +167,12 @@
               </tbody>
             </table>
           </div>
-          <b-modal id="add-station-modal" centered title="Add New Station">
+          <b-modal
+            no-close-on-backdrop
+            id="add-station-modal"
+            centered
+            title="Add New Station"
+          >
             <b-form-group
               label="Station Name"
               label-for="stationName"
@@ -355,6 +361,7 @@
             </table>
           </div>
           <b-modal
+            no-close-on-backdrop
             id="view-work-photo"
             centered
             title="Instruction Photo"
@@ -373,6 +380,7 @@
             </template>
           </b-modal>
           <b-modal
+            no-close-on-backdrop
             id="view-work-video"
             centered
             size="lg"
@@ -388,7 +396,12 @@
               </b-button>
             </template>
           </b-modal>
-          <b-modal id="add-work-modal" centered title="Add New Work Item">
+          <b-modal
+            no-close-on-backdrop
+            id="add-work-modal"
+            centered
+            title="Add New Work Item"
+          >
             <b-form-group
               label="Item ID"
               label-for="addWorkItemID"
@@ -436,6 +449,92 @@
                 trim
               ></b-form-input>
             </b-form-group>
+            <div class="form-group">
+              <b-row>
+                <b-col>
+                  <label for="addWorkMaterials">Materials</label>
+                </b-col>
+                <b-col class="d-flex justify-content-end align-items-center">
+                  <b-button size="xs" variant="info" class="float-right">
+                    Add
+                  </b-button>
+                </b-col>
+              </b-row>
+              <b-form-row>
+                <b-col>
+                  <b-form-group
+                    label="ID"
+                    label-for="addWorkMaterialID"
+                    invalid-feedback="Input Material ID"
+                  >
+                    <Dropdown
+                      :options="[
+                        { id: 1, name: 'Option 1' },
+                        { id: 2, name: 'Option 2' },
+                      ]"
+                      v-on:selected="addWorkMaterialID"
+                      v-on:filter="getDropdownValues"
+                      :disabled="false"
+                      :maxItem="10"
+                      page="Dashboard"
+                      id="addWorkMaterialID"
+                      placeholder="Select Material"
+                    >
+                    </Dropdown>
+                  </b-form-group>
+                </b-col>
+                <b-col>
+                  <b-form-group
+                    label="QTY"
+                    label-for="addWorkMaterialQty"
+                    invalid-feedback="Input Material Qty"
+                  >
+                    <b-form-input
+                      id="addWorkMaterialQty"
+                      type="number"
+                      v-model="addWorkMaterialQty"
+                    ></b-form-input>
+                  </b-form-group>
+                </b-col>
+              </b-form-row>
+              <b-form-row>
+                <b-col>
+                  <b-form-group
+                    label="ID"
+                    label-for="addWorkMaterialID"
+                    invalid-feedback="Input Material ID"
+                  >
+                    <Dropdown
+                      :options="[
+                        { id: 1, name: 'Option 1' },
+                        { id: 2, name: 'Option 2' },
+                      ]"
+                      v-on:selected="addWorkMaterialID"
+                      v-on:filter="getDropdownValues"
+                      :disabled="false"
+                      :maxItem="10"
+                      page="Dashboard"
+                      id="addWorkMaterialID"
+                      placeholder="Select Material"
+                    >
+                    </Dropdown>
+                  </b-form-group>
+                </b-col>
+                <b-col>
+                  <b-form-group
+                    label="QTY"
+                    label-for="addWorkMaterialQty"
+                    invalid-feedback="Input Material Qty"
+                  >
+                    <b-form-input
+                      id="addWorkMaterialQty"
+                      type="number"
+                      v-model="addWorkMaterialQty"
+                    ></b-form-input>
+                  </b-form-group>
+                </b-col>
+              </b-form-row>
+            </div>
             <b-form-group
               label="Instruction Text"
               label-for="addWorkInstructionText"
@@ -504,7 +603,12 @@
               </b-button>
             </template>
           </b-modal>
-          <b-modal id="edit-work-modal" centered title="Edit Work Item">
+          <b-modal
+            no-close-on-backdrop
+            id="edit-work-modal"
+            centered
+            title="Edit Work Item"
+          >
             <input
               type="hidden"
               name="foo"
@@ -706,8 +810,9 @@
         >
           <div class="d-flex justify-content-between">
             <h3>
-              <span class="fw-semi-bold"
-                >Item: {{ assSubWorkOrderInProgress.wid }} ({{
+              <span class="fw-semi-bold">Item In Progress: </span>
+              <span
+                >{{ assSubWorkOrderInProgress.wid }} ({{
                   assSubWorkOrderInProgress.sub_work_order_id
                 }})</span
               >
@@ -743,26 +848,40 @@
               variant="dark"
               class="mr-3 float-right"
               size="sm"
-              v-on:click="showInstructionsModal()"
+              v-on:click="
+                showInstructionsModal(
+                  assSubWorkOrderInProgress.instruction_video
+                )
+              "
               >Instructions</b-button
             >
           </div>
         </b-col>
       </b-row>
-      <b-modal id="instructions-modal" size="lg" centered title="Instructions">
-        <div
-          style="width: 100%; height: 400px"
-          class="d-flex justify-content-center align-items-center"
-        >
-          <p>This modal will be explaining how to assemble the item.</p>
-        </div>
+      <b-modal
+        no-close-on-backdrop
+        id="instructions-modal"
+        size="lg"
+        centered
+        title="Instructions"
+      >
+        <my-video
+          :sources="assInstructionsVideoSource"
+          :options="{ autoplay: true, volume: 1 }"
+        ></my-video>
         <template #modal-footer="{ cancel }">
           <b-button size="sm" variant="default" @click="cancel()">
             Close
           </b-button>
         </template>
       </b-modal>
-      <b-modal id="stacking-modal" size="lg" centered title="Stacking">
+      <b-modal
+        no-close-on-backdrop
+        id="stacking-modal"
+        size="lg"
+        centered
+        title="Stacking"
+      >
         <div
           style="width: 100%; height: 400px"
           class="d-flex justify-content-center align-items-center"
@@ -775,7 +894,13 @@
           </b-button>
         </template>
       </b-modal>
-      <b-modal id="materials-modal" size="lg" centered title="Materials">
+      <b-modal
+        no-close-on-backdrop
+        id="materials-modal"
+        size="lg"
+        centered
+        title="Materials"
+      >
         <div
           style="width: 100%; height: 400px"
           class="d-flex justify-content-center align-items-center"
@@ -796,6 +921,7 @@
 import Widget from "@/components/Widget/Widget";
 import Multiselect from "vue-multiselect";
 import vue2Dropzone from "vue2-dropzone";
+import Dropdown from "vue-simple-search-dropdown";
 import myVideo from "vue-video";
 
 export default {
@@ -885,7 +1011,29 @@ export default {
       this.assSubWorkOrderList = [];
       if (this.role == "Assembler") {
         this.assSubWorkOrderList = data.assSubWorkOrderList;
-        console.log(this.assSubWorkOrderList);
+        for (let i = 0; i < this.assSubWorkOrderList.length; i++) {
+          if (
+            this.assSubWorkOrderList[i].image != undefined &&
+            this.assSubWorkOrderList[i].image.length > 0
+          ) {
+            this.assSubWorkOrderList[i].image =
+              "/images/" + this.assSubWorkOrderList[i].image;
+          }
+          if (
+            this.assSubWorkOrderList[i].instruction_video != undefined &&
+            this.assSubWorkOrderList[i].instruction_video.length > 0
+          ) {
+            this.assSubWorkOrderList[i].instruction_video =
+              "/videos/" + this.assSubWorkOrderList[i].instruction_video;
+          }
+          if (
+            this.assSubWorkOrderList[i].instruction_photo != undefined &&
+            this.assSubWorkOrderList[i].instruction_photo.length > 0
+          ) {
+            this.assSubWorkOrderList[i].instruction_photo =
+              "/images/" + this.assSubWorkOrderList[i].instruction_photo;
+          }
+        }
       }
       this.assSubWorkOrderInProgress = {};
       if (
@@ -941,6 +1089,7 @@ export default {
     Multiselect,
     vueDropzone: vue2Dropzone,
     myVideo,
+    Dropdown,
   },
   data() {
     return {
@@ -991,6 +1140,7 @@ export default {
       assWorkOrderList: [],
       assSubWorkOrderList: [],
       assSubWorkOrderInProgress: {},
+      assInstructionsVideoSource: null,
     };
   },
   methods: {
@@ -1204,7 +1354,14 @@ export default {
         sub_work_order_id: this.assSubWorkOrderInProgress.sub_work_order_id,
       });
     },
-    showInstructionsModal: function () {
+    showInstructionsModal: function (videoUrl) {
+      this.assInstructionsVideoSource = null;
+      this.assInstructionsVideoSource = [
+        {
+          src: videoUrl,
+          type: "video/mp4",
+        },
+      ];
       this.$bvModal.show("instructions-modal");
     },
     showStackingModal: function () {
@@ -1229,4 +1386,5 @@ export default {
 
 <style src="./Dashboard.scss" lang="scss" />
 <style src="./multiselect.css" lang="css" />
+<style src="./Dropdown.scss" lang="scss" />
 <style src="./dropzone.css" lang="css" />
