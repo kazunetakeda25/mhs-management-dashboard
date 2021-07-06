@@ -1,12 +1,7 @@
 <template>
   <div class="visits-page">
     <div v-if="role == 'Manager'" class="manager-page">
-      <h1 class="page-title">
-        Manager&nbsp;
-        <small>
-          <small>Assembly Department</small>
-        </small>
-      </h1>
+      <h1 class="page-title">Manager&nbsp;<small><small>Assembly Department</small></small></h1>
       Greetings, {{ name }}!
       <br />
       <br />
@@ -14,14 +9,7 @@
         <b-tab title="Work Orders" active>
           <div class="d-flex justify-content-between">
             <h3><span class="fw-semi-bold">Work Order List</span></h3>
-            <b-button
-              id="addWorkOrderButton"
-              :disabled="addWorkOrderDisabled"
-              variant="success"
-              size="sm"
-              v-on:click="showAddWorkOrderModal()"
-              >Add New</b-button
-            >
+            <b-button id="addWorkOrderButton" :disabled="addWorkOrderDisabled" variant="success" size="sm" v-on:click="showAddWorkOrderModal()">Add New</b-button>
           </div>
           <div class="clearfix pt-2 pb-2">
             <p>Display All Available Work Orders</p>
@@ -39,114 +27,39 @@
               <tbody>
                 <tr v-for="row in mngWorkOrderList" :key="row.id">
                   <td>{{ row.wid }}</td>
-                  <td>
-                    <img
-                      class="img-rounded"
-                      :src="row.image"
-                      alt=""
-                      height="50"
-                    />
-                  </td>
+                  <td><img class="img-rounded" :src="row.image" height="50"/></td>
                   <td>{{ row.station_name }}</td>
                   <td>
                     <span>Built: {{ row.qty_completed }}</span>
                     <span class="float-right">Total: {{ row.qty }}</span>
                     <br />
-                    <b-progress
-                      class="sidebarProgress progress-xs mt-1"
-                      variant="info"
-                      :value="
-                        Math.round(
-                          ((row.qty_completed / row.qty) * 100 +
-                            Number.EPSILON) *
-                            100
-                        ) / 100
-                      "
-                      :max="100"
-                    />
-                    <span
-                      >Progress:
-                      {{
-                        row.qty != 0
-                          ? Math.round(
-                              ((row.qty_completed / row.qty) * 100 +
-                                Number.EPSILON) *
-                                100
-                            ) / 100
-                          : 0
-                      }}%</span
-                    >
+                    <b-progress class="sidebarProgress progress-xs mt-1" variant="info" :value=" Math.round(((row.qty_completed / row.qty) * 100 + Number.EPSILON) * 100) / 100" :max="100"/>
+                    <span>Progress: {{ row.qty != 0 ? Math.round(((row.qty_completed / row.qty) * 100 + Number.EPSILON) * 100) / 100 : 0 }}%</span>
                   </td>
                 </tr>
               </tbody>
             </table>
           </div>
-          <b-modal
-            no-close-on-backdrop
-            id="add-work-order-modal"
-            centered
-            title="Add New Work Order"
-          >
-            <b-form-group
-              label="Item ID"
-              label-for="addWorkOrderID"
-              invalid-feedback="Select Item ID"
-            >
-              <multiselect
-                id="addWorkOrderID"
-                label="name"
-                placeholder="Select Item ID"
-                track-by="name"
-                v-model="addWorkOrderID"
-                :options="mngIDDropdownOptions"
-              ></multiselect>
+          <b-modal no-close-on-backdrop id="add-work-order-modal" centered title="Add New Work Order">
+            <b-form-group label="Item ID" label-for="addWorkOrderID" invalid-feedback="Select Item ID">
+              <multiselect id="addWorkOrderID" label="name" placeholder="Select Item ID" track-by="name" v-model="addWorkOrderID" :options="mngIDDropdownOptions"></multiselect>
             </b-form-group>
-            <b-form-group
-              label="QTY"
-              label-for="addWorkOrderQuantity"
-              invalid-feedback="Input QTY"
-            >
-              <b-form-input
-                id="addWorkOrderQuantity"
-                type="number"
-                v-model="addWorkOrderQuantity"
-                trim
-              ></b-form-input>
+            <b-form-group label="QTY" label-for="addWorkOrderQuantity" invalid-feedback="Input QTY">
+              <b-form-input id="addWorkOrderQuantity" type="number" v-model="addWorkOrderQuantity"></b-form-input>
             </b-form-group>
-            <b-form-group
-              label="STA"
-              label-for="addWorkOrderStation"
-              invalid-feedback="Select STA"
-            >
-              <multiselect
-                id="addWorkOrderStation"
-                label="name"
-                placeholder="Select Station(s)"
-                track-by="name"
-                v-model="addWorkOrderStation"
-                :options="mngStationDropdownOptions"
-                :multiple="true"
-              ></multiselect>
+            <b-form-group label="STA" label-for="addWorkOrderStation" invalid-feedback="Select STA">
+              <multiselect id="addWorkOrderStation" label="name" placeholder="Select Station(s)" track-by="name" v-model="addWorkOrderStation" :options="mngStationDropdownOptions" :multiple="true"></multiselect>
             </b-form-group>
             <template #modal-footer="{ cancel }">
-              <b-button size="sm" variant="default" @click="cancel()">
-                Cancel
-              </b-button>
-              <b-button size="sm" variant="success" v-on:click="addWorkOrder()">
-                Add
-              </b-button>
+              <b-button size="sm" variant="default" @click="cancel()">Cancel</b-button>
+              <b-button size="sm" variant="success" v-on:click="addWorkOrder()">Add</b-button>
             </template>
           </b-modal>
         </b-tab>
         <b-tab title="Stations">
           <div class="d-flex justify-content-between">
             <h3><span class="fw-semi-bold">Station List</span></h3>
-            <b-button
-              variant="success"
-              size="sm"
-              v-on:click="showAddStationModal()"
-              >Add New</b-button
-            >
+            <b-button variant="success" size="sm" v-on:click="showAddStationModal()">Add New</b-button>
           </div>
           <div class="clearfix pt-2 pb-2">
             <p>Display All Available Stations</p>
@@ -167,47 +80,23 @@
               </tbody>
             </table>
           </div>
-          <b-modal
-            no-close-on-backdrop
-            id="add-station-modal"
-            centered
-            title="Add New Station"
-          >
-            <b-form-group
-              label="Station Name"
-              label-for="stationName"
-              invalid-feedback="Input Station Name"
-            >
-              <b-form-input
-                id="addStationName"
-                type="text"
-                v-model="addStationName"
-                trim
-              ></b-form-input>
+          <b-modal no-close-on-backdrop id="add-station-modal" centered title="Add New Station">
+            <b-form-group label="Station Name" label-for="stationName" invalid-feedback="Input Station Name">
+              <b-form-input id="addStationName" type="text" v-model="addStationName" trim></b-form-input>
             </b-form-group>
             <template #modal-footer="{ cancel }">
-              <b-button size="sm" variant="default" @click="cancel()">
-                Cancel
-              </b-button>
-              <b-button size="sm" variant="success" v-on:click="addStation()">
-                Add
-              </b-button>
+              <b-button size="sm" variant="default" @click="cancel()">Cancel</b-button>
+              <b-button size="sm" variant="success" v-on:click="addStation()">Add</b-button>
             </template>
           </b-modal>
         </b-tab>
         <b-tab title="Report">
           <b-row>
             <b-col>
-              <h3>
-                <span class="fw-semi-bold"
-                  >Total Built: {{ mngBuiltCount }}</span
-                >
-              </h3>
+              <h3><span class="fw-semi-bold">Total Built: {{ mngBuiltCount }}</span></h3>
             </b-col>
             <b-col>
-              <b-button variant="info" class="mr-3 float-right" size="sm"
-                >Parts Request</b-button
-              >
+              <b-button variant="info" class="mr-3 float-right" size="sm">Parts Request</b-button>
             </b-col>
           </b-row>
           <b-row>
@@ -260,12 +149,7 @@
       </b-tabs>
     </div>
     <div v-if="role == 'Developer'" class="manager-page">
-      <h1 class="page-title">
-        Developer&nbsp;
-        <small>
-          <small>Management</small>
-        </small>
-      </h1>
+      <h1 class="page-title">Developer&nbsp;<small><small>Management</small></small></h1>
       Greetings, {{ name }}!
       <br />
       <br />
@@ -273,13 +157,7 @@
         <b-tab title="Work Items" active>
           <div class="d-flex justify-content-between">
             <h3><span class="fw-semi-bold">Work Items List</span></h3>
-            <b-button
-              id="addWorkButton"
-              variant="success"
-              size="sm"
-              v-on:click="showAddWorkModal()"
-              >Add New</b-button
-            >
+            <b-button id="addWorkButton" variant="success" size="sm" v-on:click="showAddWorkModal()">Add New</b-button>
           </div>
           <div class="clearfix pt-2 pb-2">
             <p>Display All Available Work Items</p>
@@ -300,43 +178,19 @@
               <tbody>
                 <tr v-for="row in mngWorkList" :key="row.id">
                   <td>{{ row.wid }}</td>
+                  <td><img class="img-rounded" :src="row.image" height="50"/></td>
+                  <td><p class="text-max-5-lines">{{ row.description }}</p></td>
+                  <td><p class="text-max-5-lines">{{ row.instruction_text }}</p></td>
                   <td>
-                    <img
-                      class="img-rounded"
-                      :src="row.image"
-                      alt=""
-                      height="50"
-                    />
+                    <b-button size="sm" variant="primary" v-on:click="viewWorkPhoto(row.instruction_photo)"><i class="fa fa-eye"></i>&nbsp; View</b-button>
                   </td>
                   <td>
-                    <p class="text-max-5-lines">{{ row.description }}</p>
-                  </td>
-                  <td>
-                    <p class="text-max-5-lines">{{ row.instruction_text }}</p>
-                  </td>
-                  <td>
-                    <b-button
-                      size="sm"
-                      variant="primary"
-                      v-on:click="viewWorkPhoto(row.instruction_photo)"
-                      ><i class="fa fa-eye"></i>&nbsp; View</b-button
-                    >
-                  </td>
-                  <td>
-                    <b-button
-                      size="sm"
-                      variant="primary"
-                      v-on:click="viewWorkVideo(row.instruction_video)"
-                      ><i class="fa fa-eye"></i>&nbsp; View</b-button
-                    >
+                    <b-button size="sm" variant="primary" v-on:click="viewWorkVideo(row.instruction_video)"><i class="fa fa-eye"></i>&nbsp; View</b-button>
                   </td>
                   <td>
                     <b-button-group>
-                      <b-button
-                        size="sm"
-                        variant="primary"
-                        v-on:click="
-                          showWorkEditModal({
+                      <b-button size="sm" variant="primary"
+                        v-on:click="showWorkEditModal({
                             id: row.id,
                             wid: row.wid,
                             image: row.image,
@@ -344,81 +198,31 @@
                             instruction_text: row.instruction_text,
                             instruction_photo: row.instruction_photo,
                             instruction_video: row.instruction_video,
-                          })
-                        "
-                        ><i class="fa fa-edit"></i
-                      ></b-button>
-                      <b-button
-                        size="sm"
-                        variant="danger"
-                        v-on:click="deleteWork(row.id)"
-                        ><i class="fa fa-trash"></i
-                      ></b-button>
+                          })"><i class="fa fa-edit"></i></b-button>
+                      <b-button size="sm" variant="danger" v-on:click="deleteWork(row.id)"><i class="fa fa-trash"></i></b-button>
                     </b-button-group>
                   </td>
                 </tr>
               </tbody>
             </table>
           </div>
-          <b-modal
-            no-close-on-backdrop
-            id="view-work-photo"
-            centered
-            title="Instruction Photo"
-            size="lg"
-          >
-            <img
-              class="img-rounded"
-              :src="viewWorkPhotoUrl"
-              alt=""
-              style="width: 100%; height: auto; max-height: 500px"
-            />
+          <b-modal no-close-on-backdrop id="view-work-photo" centered title="Instruction Photo" size="lg">
+            <img class="img-rounded" :src="viewWorkPhotoUrl" style="width: 100%; height: auto; max-height: 500px"/>
             <template #modal-footer="{ cancel }">
-              <b-button size="sm" variant="default" @click="cancel()">
-                Close
-              </b-button>
+              <b-button size="sm" variant="default" @click="cancel()">Close</b-button>
             </template>
           </b-modal>
-          <b-modal
-            no-close-on-backdrop
-            id="view-work-video"
-            centered
-            size="lg"
-            title="Instruction Video"
-          >
-            <my-video
-              :sources="viewWorkVideoSource"
-              :options="{ autoplay: true, volume: 1 }"
-            ></my-video>
+          <b-modal no-close-on-backdrop id="view-work-video" centered size="lg" title="Instruction Video">
+            <my-video :sources="viewWorkVideoSource" :options="{ autoplay: true, volume: 1 }"></my-video>
             <template #modal-footer="{ cancel }">
-              <b-button size="sm" variant="default" @click="cancel()">
-                Close
-              </b-button>
+              <b-button size="sm" variant="default" @click="cancel()">Close</b-button>
             </template>
           </b-modal>
-          <b-modal
-            no-close-on-backdrop
-            id="add-work-modal"
-            centered
-            title="Add New Work Item"
-          >
-            <b-form-group
-              label="Item ID"
-              label-for="addWorkItemID"
-              invalid-feedback="Input Item ID"
-            >
-              <b-form-input
-                id="addWorkItemID"
-                type="text"
-                v-model="addWorkItemID"
-                trim
-              ></b-form-input>
+          <b-modal no-close-on-backdrop id="add-work-modal" centered title="Add New Work Item">
+            <b-form-group label="Item ID" label-for="addWorkItemID" invalid-feedback="Input Item ID">
+              <b-form-input id="addWorkItemID" type="text" v-model="addWorkItemID" trim></b-form-input>
             </b-form-group>
-            <b-form-group
-              label="Image"
-              label-for="addWorkImage"
-              invalid-feedback="Choose Image"
-            >
+            <b-form-group label="Image" label-for="addWorkImage" invalid-feedback="Choose Image">
               <vue-dropzone
                 id="addWorkImage"
                 :options="{
@@ -432,22 +236,12 @@
                 }"
                 :useCustomSlot="true"
                 v-on:vdropzone-file-added="addWorkImageFileAdded"
-                v-on:vdropzone-complete="addWorkImageFileUploaded"
-              >
+                v-on:vdropzone-complete="addWorkImageFileUploaded">
                 <div class="dz-message-content">Drag Image File To Upload</div>
               </vue-dropzone>
             </b-form-group>
-            <b-form-group
-              label="Description"
-              label-for="addWorkDescription"
-              invalid-feedback="Input Description"
-            >
-              <b-form-input
-                id="addWorkDescription"
-                type="text"
-                v-model="addWorkDescription"
-                trim
-              ></b-form-input>
+            <b-form-group label="Description" label-for="addWorkDescription" invalid-feedback="Input Description">
+              <b-form-input id="addWorkDescription" type="text" v-model="addWorkDescription"></b-form-input>
             </b-form-group>
             <div class="form-group">
               <b-row>
@@ -455,68 +249,34 @@
                   <label for="addWorkMaterials">Materials</label>
                 </b-col>
                 <b-col class="d-flex justify-content-end align-items-center">
-                  <b-button
-                    size="xs"
-                    variant="info"
-                    class="float-right"
-                    v-on:click="addWorkAddMaterial()"
-                  >
-                    Add
-                  </b-button>
+                  <b-button size="xs" variant="info" class="float-right" v-on:click="addWorkAddMaterial()">Add</b-button>
                 </b-col>
               </b-row>
               <b-form-row v-for="row in addWorkMaterialList" :key="row.id" class="my-2">
                 <b-col>
                   <Dropdown
                     :options="addWorkMaterialDropdownOptions"
-                    v-on:selected="addWorkMaterialSelected(row.id)"
+                    v-on:selected="addWorkMaterialSelected"
                     v-model="row.addWorkMaterialID"
                     :maxItem="10"
                     page="Dashboard"
                     :id="'addWorkMaterialID' + row.id"
-                    placeholder="Select Material ID"
-                  >
-                  </Dropdown>
+                    placeholder="Select Material ID"></Dropdown>
                 </b-col>
                 <b-col>
                   <b-input-group>
-                    <b-form-input
-                      :id="'addWorkMaterialQty' + row.id"
-                      type="number"
-                      placeholder="Qty"
-                      v-model="row.addWorkMaterialQty"
-                    ></b-form-input>
+                    <b-form-input :id="'addWorkMaterialQty' + row.id" type="number" placeholder="Qty" v-model="row.addWorkMaterialQty"></b-form-input>
                     <b-input-group-append>
-                      <b-button
-                        size="xs"
-                        variant="danger"
-                        v-on:click="addWorkRemoveMaterial()"
-                      >
-                        <i class="fa fa-trash"></i>
-                      </b-button>
+                      <b-button size="xs" variant="danger" v-on:click="addWorkRemoveMaterial()"><i class="fa fa-trash"></i></b-button>
                     </b-input-group-append>
                   </b-input-group>
                 </b-col>
               </b-form-row>
             </div>
-            <b-form-group
-              label="Instruction Text"
-              label-for="addWorkInstructionText"
-              invalid-feedback="Input Instruction Text"
-            >
-              <b-form-textarea
-                id="addWorkInstructionText"
-                type="text"
-                v-model="addWorkInstructionText"
-                rows="5"
-                min-rows="5"
-              ></b-form-textarea>
+            <b-form-group label="Instruction Text" label-for="addWorkInstructionText" invalid-feedback="Input Instruction Text">
+              <b-form-textarea id="addWorkInstructionText" type="text" v-model="addWorkInstructionText" rows="5" min-rows="5"></b-form-textarea>
             </b-form-group>
-            <b-form-group
-              label="Instruction Video"
-              label-for="addWorkInstructionVideo"
-              invalid-feedback="Choose Video"
-            >
+            <b-form-group label="Instruction Video" label-for="addWorkInstructionVideo" invalid-feedback="Choose Video">
               <vue-dropzone
                 id="addWorkInstructionVideo"
                 :options="{
@@ -530,16 +290,11 @@
                 }"
                 :useCustomSlot="true"
                 v-on:vdropzone-file-added="addWorkInstructionVideoFileAdded"
-                v-on:vdropzone-complete="addWorkInstructionVideoFileUploaded"
-              >
+                v-on:vdropzone-complete="addWorkInstructionVideoFileUploaded">
                 <div class="dz-message-content">Drag Video File To Upload</div>
               </vue-dropzone>
             </b-form-group>
-            <b-form-group
-              label="Instruction Photo"
-              label-for="addWorkInstructionPhoto"
-              invalid-feedback="Choose Image"
-            >
+            <b-form-group label="Instruction Photo" label-for="addWorkInstructionPhoto" invalid-feedback="Choose Image">
               <vue-dropzone
                 id="addWorkInstructionPhoto"
                 :options="{
@@ -553,49 +308,21 @@
                 }"
                 :useCustomSlot="true"
                 v-on:vdropzone-file-added="addWorkInstructionPhotoFileAdded"
-                v-on:vdropzone-complete="addWorkInstructionPhotoFileUploaded"
-              >
+                v-on:vdropzone-complete="addWorkInstructionPhotoFileUploaded">
                 <div class="dz-message-content">Drag Image File To Upload</div>
               </vue-dropzone>
             </b-form-group>
             <template #modal-footer="{ cancel }">
-              <b-button size="sm" variant="default" @click="cancel()">
-                Cancel
-              </b-button>
-              <b-button size="sm" variant="success" v-on:click="addWork()">
-                Add
-              </b-button>
+              <b-button size="sm" variant="default" @click="cancel()">Cancel</b-button>
+              <b-button size="sm" variant="success" v-on:click="addWork()">Add</b-button>
             </template>
           </b-modal>
-          <b-modal
-            no-close-on-backdrop
-            id="edit-work-modal"
-            centered
-            title="Edit Work Item"
-          >
-            <input
-              type="hidden"
-              name="foo"
-              id="editWorkID"
-              :value="editWorkID"
-            />
-            <b-form-group
-              label="Item ID"
-              label-for="editWorkItemID"
-              invalid-feedback="Input Item ID"
-            >
-              <b-form-input
-                id="editWorkItemID"
-                type="text"
-                v-model="editWorkItemID"
-                trim
-              ></b-form-input>
+          <b-modal no-close-on-backdrop id="edit-work-modal" centered title="Edit Work Item">
+            <input type="hidden" id="editWorkID" :value="editWorkID"/>
+            <b-form-group label="Item ID" label-for="editWorkItemID" invalid-feedback="Input Item ID">
+              <b-form-input id="editWorkItemID" type="text" v-model="editWorkItemID" trim></b-form-input>
             </b-form-group>
-            <b-form-group
-              label="Image"
-              label-for="editWorkImage"
-              invalid-feedback="Choose Image"
-            >
+            <b-form-group label="Image" label-for="editWorkImage" invalid-feedback="Choose Image">
               <vue-dropzone
                 id="editWorkImage"
                 :options="{
@@ -609,41 +336,17 @@
                 }"
                 :useCustomSlot="true"
                 v-on:vdropzone-file-added="editWorkImageFileAdded"
-                v-on:vdropzone-complete="editWorkImageFileUploaded"
-              >
+                v-on:vdropzone-complete="editWorkImageFileUploaded">
                 <div class="dz-message-content">Drag Image File To Upload</div>
               </vue-dropzone>
             </b-form-group>
-            <b-form-group
-              label="Description"
-              label-for="editWorkDescription"
-              invalid-feedback="Input Description"
-            >
-              <b-form-input
-                id="editWorkDescription"
-                type="text"
-                v-model="editWorkDescription"
-                trim
-              ></b-form-input>
+            <b-form-group label="Description" label-for="editWorkDescription" invalid-feedback="Input Description">
+              <b-form-input id="editWorkDescription" type="text" v-model="editWorkDescription"></b-form-input>
             </b-form-group>
-            <b-form-group
-              label="Instruction Text"
-              label-for="editWorkInstructionText"
-              invalid-feedback="Input Instruction Text"
-            >
-              <b-form-textarea
-                id="editWorkInstructionText"
-                type="text"
-                v-model="editWorkInstructionText"
-                rows="5"
-                min-rows="5"
-              ></b-form-textarea>
+            <b-form-group label="Instruction Text" label-for="editWorkInstructionText" invalid-feedback="Input Instruction Text">
+              <b-form-textarea id="editWorkInstructionText" type="text" v-model="editWorkInstructionText" rows="5" min-rows="5"></b-form-textarea>
             </b-form-group>
-            <b-form-group
-              label="Instruction Video"
-              label-for="editWorkInstructionVideo"
-              invalid-feedback="Choose Video"
-            >
+            <b-form-group label="Instruction Video" label-for="editWorkInstructionVideo" invalid-feedback="Choose Video">
               <vue-dropzone
                 id="editWorkInstructionVideo"
                 :options="{
@@ -657,16 +360,11 @@
                 }"
                 :useCustomSlot="true"
                 v-on:vdropzone-file-added="editWorkInstructionVideoFileAdded"
-                v-on:vdropzone-complete="editWorkInstructionVideoFileUploaded"
-              >
+                v-on:vdropzone-complete="editWorkInstructionVideoFileUploaded">
                 <div class="dz-message-content">Drag Video File To Upload</div>
               </vue-dropzone>
             </b-form-group>
-            <b-form-group
-              label="Instruction Photo"
-              label-for="editWorkInstructionPhoto"
-              invalid-feedback="Choose Image"
-            >
+            <b-form-group label="Instruction Photo" label-for="editWorkInstructionPhoto" invalid-feedback="Choose Image">
               <vue-dropzone
                 id="editWorkInstructionPhoto"
                 :options="{
@@ -680,28 +378,123 @@
                 }"
                 :useCustomSlot="true"
                 v-on:vdropzone-file-added="editWorkInstructionPhotoFileAdded"
-                v-on:vdropzone-complete="editWorkInstructionPhotoFileUploaded"
-              >
+                v-on:vdropzone-complete="editWorkInstructionPhotoFileUploaded">
                 <div class="dz-message-content">Drag Image File To Upload</div>
               </vue-dropzone>
             </b-form-group>
             <template #modal-footer="{ cancel }">
-              <b-button size="sm" variant="default" @click="cancel()">
-                Cancel
-              </b-button>
-              <b-button size="sm" variant="success" v-on:click="editWork()">
-                Update
-              </b-button>
+              <b-button size="sm" variant="default" @click="cancel()">Cancel</b-button>
+              <b-button size="sm" variant="success" v-on:click="editWork()">Update</b-button>
+            </template>
+          </b-modal>
+        </b-tab>
+        <b-tab title="Materials">
+          <div class="d-flex justify-content-between">
+            <h3><span class="fw-semi-bold">Materials List</span></h3>
+            <b-button id="addWorkButton" variant="success" size="sm" v-on:click="showMaterialAddModal()">Add New</b-button>
+          </div>
+          <div class="clearfix pt-2 pb-2">
+            <p>Display All Available Materials</p>
+          </div>
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Name</th>
+                  <th>Image</th>
+                  <th>Description</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="row in mngMaterialList" :key="row.id">
+                  <td>{{ row.wid }}</td>
+                  <td><img class="img-rounded" :src="row.image" height="50"/></td>
+                  <td><p>{{ row.name }}</p></td>
+                  <td><p class="text-max-5-lines">{{ row.description }}</p></td>
+                  <td>
+                    <b-button-group>
+                      <b-button size="sm" variant="primary"
+                        v-on:click="showMaterialEditModal({
+                            id: row.id,
+                            image: row.image,
+                            name: row.name,
+                            description: row.description,
+                          })"><i class="fa fa-edit"></i></b-button>
+                      <b-button size="sm" variant="danger" v-on:click="deleteMaterial(row.id)"><i class="fa fa-trash"></i></b-button>
+                    </b-button-group>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <b-modal no-close-on-backdrop id="add-material-modal" centered title="Add New Material">
+            <b-form-group label="Name" label-for="addMaterialName" invalid-feedback="Input Material Name">
+              <b-form-input id="addMaterialName" type="text" v-model="addMaterialName"></b-form-input>
+            </b-form-group>
+            <b-form-group label="Image" label-for="addMaterialImage" invalid-feedback="Choose Image">
+              <vue-dropzone
+                id="addMaterialImage"
+                :options="{
+                  uploadMultiple: false,
+                  maxFilesize: 4,
+                  url: 'http://localhost:4000/api/upload-image', // 'http://45.63.108.165:4000/api/upload-image'
+                  acceptdFiles: 'image/*',
+                  thumbnailWidth: 150,
+                  thumbnailHeight: 150,
+                  addRemoveLinks: true,
+                }"
+                :useCustomSlot="true"
+                v-on:vdropzone-file-added="addMaterialImageFileAdded"
+                v-on:vdropzone-complete="addMaterialImageFileUploaded">
+                <div class="dz-message-content">Drag Image File To Upload</div>
+              </vue-dropzone>
+            </b-form-group>
+            <b-form-group label="Description" label-for="addMaterialDescription" invalid-feedback="Input Description">
+              <b-form-textarea id="addMaterialDescription" type="text" v-model="addMaterialDescription" rows="5" min-rows="5"></b-form-textarea>
+            </b-form-group>
+            <template #modal-footer="{ cancel }">
+              <b-button size="sm" variant="default" @click="cancel()">Cancel</b-button>
+              <b-button size="sm" variant="success" v-on:click="addMaterial()">Add</b-button>
+            </template>
+          </b-modal>
+          <b-modal no-close-on-backdrop id="edit-material-modal" centered title="Edit Material">
+            <input type="hidden" id="editMaterialID" :value="editMaterialID"/>
+            <b-form-group label="Name" label-for="editMaterialName" invalid-feedback="Input Material Name">
+              <b-form-input id="editMaterialName" type="text" v-model="editMaterialName"></b-form-input>
+            </b-form-group>
+            <b-form-group label="Image" label-for="editMaterialImage" invalid-feedback="Choose Image">
+              <vue-dropzone
+                id="editWorkImage"
+                :options="{
+                  uploadMultiple: false,
+                  maxFilesize: 4,
+                  url: 'http://localhost:4000/api/upload-image', // 'http://45.63.108.165:4000/api/upload-image'
+                  acceptdFiles: 'image/*',
+                  thumbnailWidth: 150,
+                  thumbnailHeight: 150,
+                  addRemoveLinks: true,
+                }"
+                :useCustomSlot="true"
+                v-on:vdropzone-file-added="editMaterialImageFileAdded"
+                v-on:vdropzone-complete="editMaterialImageFileUploaded">
+                <div class="dz-message-content">Drag Image File To Upload</div>
+              </vue-dropzone>
+            </b-form-group>
+            <b-form-group label="Description" label-for="editMaterialDescription" invalid-feedback="Input Description">
+              <b-form-textarea id="editMaterialDescription" type="text" v-model="editMaterialDescription" rows="5" min-rows="5"></b-form-textarea>
+            </b-form-group>
+            <template #modal-footer="{ cancel }">
+              <b-button size="sm" variant="default" @click="cancel()">Cancel</b-button>
+              <b-button size="sm" variant="success" v-on:click="editMaterial()">Update</b-button>
             </template>
           </b-modal>
         </b-tab>
       </b-tabs>
     </div>
     <div v-if="role == 'Assembler'" class="worker-page">
-      <h1 class="page-title">
-        Assembler
-        <small>{{ stationName }}</small>
-      </h1>
+      <h1 class="page-title">Assembler<small>{{ stationName }}</small></h1>
       Greetings, {{ name }}!
       <br />
       <br />
@@ -726,56 +519,24 @@
               <tbody>
                 <tr v-for="row in assWorkOrderList" :key="row.id">
                   <td>{{ row.wid }}</td>
-                  <td>
-                    <img
-                      class="img-rounded"
-                      :src="row.image"
-                      alt=""
-                      height="30"
-                    />
-                  </td>
-                  <td>
-                    {{ row.qty - row.qty_completed - row.qty_in_progress }}
-                  </td>
+                  <td><img class="img-rounded" :src="row.image" height="30"/></td>
+                  <td>{{ row.qty - row.qty_completed - row.qty_in_progress }}</td>
                 </tr>
               </tbody>
             </table>
           </div>
         </b-col>
-        <b-col
-          v-if="Object.keys(assSubWorkOrderInProgress).length > 0"
-          xs="12"
-          lg="8"
-          class="mb-5"
-        >
+        <b-col v-if="Object.keys(assSubWorkOrderInProgress).length > 0" xs="12" lg="8" class="mb-5">
           <div class="d-flex justify-content-between">
-            <h3>
-              <span>{{ assSubWorkOrderInProgress.wid }}</span>
-              <p style="font-size: 1rem">
-                <br />Sequence Number:
-                {{ assSubWorkOrderInProgress.sub_work_order_id }}
-              </p>
-            </h3>
-            <b-button variant="success" size="sm" v-on:click="markAsComplete()"
-              >Mark as Complete</b-button
-            >
+            <h3><span>{{ assSubWorkOrderInProgress.wid }}</span></h3>
+            <b-button variant="success" size="sm" v-on:click="markAsComplete()">Mark as Complete</b-button>
           </div>
           <div class="clearfix pt-4 pb-2">
             <p>{{ assSubWorkOrderInProgress.description }}</p>
           </div>
-          <img
-            :src="assSubWorkOrderInProgress.instruction_photo"
-            alt="..."
-            style="width: 100%; max-width: 450px"
-          />
+          <img :src="assSubWorkOrderInProgress.instruction_photo" style="width: 100%; max-width: 450px"/>
           <div class="pt-5 w-100">
-            <b-button
-              variant="warning"
-              class="float-right"
-              size="sm"
-              v-on:click="showMaterialsModal()"
-              >Materials</b-button
-            >
+            <b-button variant="warning" class="float-right" size="sm" v-on:click="showMaterialsModal()">Materials</b-button>
             <b-button
               variant="default"
               class="mr-3 float-right"
@@ -857,7 +618,7 @@
 </template>
 
 <script>
-import Dropdown from "vue-simple-search-dropdown";
+import Dropdown from "@/components/Dropdown/Dropdown";
 import Multiselect from "vue-multiselect";
 import myVideo from "vue-video";
 import Widget from "@/components/Widget/Widget";
