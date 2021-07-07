@@ -115,7 +115,7 @@
                   </thead>
                   <tbody>
                     <tr v-for="row in mngWorkOrderList" :key="row.id">
-                      <td>{{ row.work_id }}</td>
+                      <td>{{ row.wid }}</td>
                       <td>{{ row.qty_completed }}</td>
                     </tr>
                   </tbody>
