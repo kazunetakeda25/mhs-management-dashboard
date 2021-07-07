@@ -557,12 +557,12 @@
         <b-col v-if="Object.keys(assSubWorkOrderInProgress).length > 0" xs="12" lg="8" class="mb-5">
           <div class="d-flex justify-content-between">
             <h3><span>{{ assSubWorkOrderInProgress.wid }}</span></h3>
-            <b-button variant="success" size="sm" v-on:click="markAsComplete()">Mark as Complete</b-button>
+            <b-button variant="success" size="sm" v-on:click="markAsComplete()">Completed</b-button>
           </div>
           <div class="clearfix pt-4 pb-2">
             <p>{{ assSubWorkOrderInProgress.description }}</p>
           </div>
-          <img :src="assSubWorkOrderInProgress.instruction_photo" style="width: 100%; max-width: 450px"/>
+          <img :src="assSubWorkOrderInProgress.image" style="width: 100%; max-width: 600px"/>
           <div class="pt-5 w-100">
             <b-button variant="warning" class="float-right" size="sm" v-on:click="showMaterialsModal()">Materials</b-button>
             <b-button variant="default" class="mr-3 float-right" size="sm" v-on:click="showStackingModal()">Stacking</b-button>
@@ -577,8 +577,10 @@
         </template>
       </b-modal>
       <b-modal no-close-on-backdrop id="stacking-modal" size="lg" centered title="Stacking">
-        <div style="width: 100%; height: 400px" class="d-flex justify-content-center align-items-center">
+        <div class="text-center">
           <p>{{ assSubWorkOrderInProgress.instruction_text }}</p>
+          <br>
+          <img :src="assSubWorkOrderInProgress.instruction_photo" style="width: 100%;"/>
         </div>
         <template #modal-footer="{ cancel }">
           <b-button size="sm" variant="default" @click="cancel()">Close</b-button>
