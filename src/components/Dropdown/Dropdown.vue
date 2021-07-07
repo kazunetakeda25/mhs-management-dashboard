@@ -10,6 +10,7 @@
       v-model="searchFilter"
       :disabled="disabled"
       :placeholder="placeholder"
+      autocomplete="off"
     />
 
     <!-- Dropdown Menu -->
@@ -31,6 +32,12 @@ export default {
   name: "Dropdown",
   template: "Dropdown",
   props: {
+    uuid: {
+      type: Number,
+      required: false,
+      default: 0,
+      note: "Input UUID",
+    },
     name: {
       type: String,
       required: false,
@@ -40,7 +47,7 @@ export default {
     options: {
       type: Array,
       required: true,
-      default: [],
+      default: null,
       note: "Options of dropdown. An array of options with id and name",
     },
     placeholder: {
@@ -61,6 +68,12 @@ export default {
       default: 6,
       note: "Max items showing",
     },
+    default: {
+      type: Object,
+      required: false,
+      default: null,
+      note: "The item to select upon initialisation",
+    },
   },
   data() {
     return {
@@ -70,7 +83,7 @@ export default {
     };
   },
   created() {
-    this.$emit("selected", this.selected);
+    this.$emit("selected", this.$props.uuid, this.selected);
   },
   computed: {
     filteredOptions() {
@@ -89,10 +102,10 @@ export default {
       this.selected = option;
       this.optionsShown = false;
       this.searchFilter = this.selected.name;
-      this.$emit("selected", this.selected);
+      this.$emit("selected", this.$props.uuid, this.selected);
     },
     showOptions() {
-      if (!this.disabled) {
+      if (!this.disabled && this.optionsShown == false) {
         this.searchFilter = "";
         this.optionsShown = true;
       }
@@ -120,6 +133,9 @@ export default {
         this.selected = this.filteredOptions[0];
       }
       this.$emit("filter", this.searchFilter);
+    },
+    default(val) {
+      this.selectOption(val);
     },
   },
 };
