@@ -227,7 +227,7 @@
                 :options="{
                   uploadMultiple: false,
                   maxFilesize: 4,
-                  url: 'http://localhost:4000/api/upload-image', // 'http://45.63.108.165:4000/api/upload-image'
+                  url: 'http://45.63.108.165:4000/api/upload-image', // 'http://45.63.108.165:4000/api/upload-image'
                   acceptdFiles: 'image/*',
                   thumbnailWidth: 150,
                   thumbnailHeight: 150,
@@ -281,7 +281,7 @@
                   uploadMultiple: false,
                   maxFilesize: 500,
                   acceptdFiles: 'video/*',
-                  url: 'http://localhost:4000/api/upload-video', // 'http://45.63.108.165:4000/api/upload-video'
+                  url: 'http://45.63.108.165:4000/api/upload-video', // 'http://45.63.108.165:4000/api/upload-video'
                   thumbnailWidth: 150,
                   thumbnailHeight: 150,
                   addRemoveLinks: true,
@@ -299,7 +299,7 @@
                   uploadMultiple: false,
                   maxFilesize: 4,
                   acceptdFiles: 'image/*',
-                  url: 'http://localhost:4000/api/upload-image', // 'http://45.63.108.165:4000/api/upload-image'
+                  url: 'http://45.63.108.165:4000/api/upload-image', // 'http://45.63.108.165:4000/api/upload-image'
                   thumbnailWidth: 150,
                   thumbnailHeight: 150,
                   addRemoveLinks: true,
@@ -326,7 +326,7 @@
                 :options="{
                   uploadMultiple: false,
                   maxFilesize: 4,
-                  url: 'http://localhost:4000/api/upload-image', // 'http://45.63.108.165:4000/api/upload-image'
+                  url: 'http://45.63.108.165:4000/api/upload-image', // 'http://45.63.108.165:4000/api/upload-image'
                   acceptdFiles: 'image/*',
                   thumbnailWidth: 150,
                   thumbnailHeight: 150,
@@ -381,7 +381,7 @@
                   uploadMultiple: false,
                   maxFilesize: 500,
                   acceptdFiles: 'video/*',
-                  url: 'http://localhost:4000/api/upload-video', // 'http://45.63.108.165:4000/api/upload-video'
+                  url: 'http://45.63.108.165:4000/api/upload-video', // 'http://45.63.108.165:4000/api/upload-video'
                   thumbnailWidth: 150,
                   thumbnailHeight: 150,
                   addRemoveLinks: true,
@@ -399,7 +399,7 @@
                   uploadMultiple: false,
                   maxFilesize: 4,
                   acceptdFiles: 'image/*',
-                  url: 'http://localhost:4000/api/upload-image', // 'http://45.63.108.165:4000/api/upload-image'
+                  url: 'http://45.63.108.165:4000/api/upload-image', // 'http://45.63.108.165:4000/api/upload-image'
                   thumbnailWidth: 150,
                   thumbnailHeight: 150,
                   addRemoveLinks: true,
@@ -467,7 +467,7 @@
                 :options="{
                   uploadMultiple: false,
                   maxFilesize: 4,
-                  url: 'http://localhost:4000/api/upload-image', // 'http://45.63.108.165:4000/api/upload-image'
+                  url: 'http://45.63.108.165:4000/api/upload-image', // 'http://45.63.108.165:4000/api/upload-image'
                   acceptdFiles: 'image/*',
                   thumbnailWidth: 150,
                   thumbnailHeight: 150,
@@ -498,7 +498,7 @@
                 :options="{
                   uploadMultiple: false,
                   maxFilesize: 4,
-                  url: 'http://localhost:4000/api/upload-image', // 'http://45.63.108.165:4000/api/upload-image'
+                  url: 'http://45.63.108.165:4000/api/upload-image', // 'http://45.63.108.165:4000/api/upload-image'
                   acceptdFiles: 'image/*',
                   thumbnailWidth: 150,
                   thumbnailHeight: 150,
@@ -628,6 +628,11 @@ export default {
       this.addWorkMaterialDropdownOptions = [];
       this.devMaterialList = data.devMaterialList;
       for (let i = 0; i < this.devMaterialList.length; i++) {
+        if (this.devMaterialList[i].image != undefined && this.devMaterialList[i].image.length > 0) {
+          this.devMaterialList[i].image = "/images/" + this.devMaterialList[i].image;
+        }
+      }
+      for (let i = 0; i < this.devMaterialList.length; i++) {
         this.addWorkMaterialDropdownOptions.push({
           id: this.devMaterialList[i].id, 
           name: this.devMaterialList[i].name
@@ -645,15 +650,17 @@ export default {
           this.mngWorkList[i].instruction_photo = "/images/" + this.mngWorkList[i].instruction_photo;
         }
         this.mngWorkList[i].materials = [];
-        const materialIds = this.mngWorkList[i].material_ids.split(',');
-        const materialQtys = this.mngWorkList[i].material_qtys.split(',');
-        for (let j = 0; j < materialIds.length; j++) {
-          const materialName = this.devMaterialList.find(it => it.id == materialIds[j]).name;
-          this.mngWorkList[i].materials.push({
-            id: materialIds[j], 
-            name: materialName, 
-            qty: materialQtys[j]
-          });
+        if (this.mngWorkList[i].material_ids != undefined) {
+          const materialIds = this.mngWorkList[i].material_ids.split(',');
+          const materialQtys = this.mngWorkList[i].material_qtys.split(',');
+          for (let j = 0; j < materialIds.length; j++) {
+            const materialName = this.devMaterialList.find(it => it.id == materialIds[j]).name;
+            this.mngWorkList[i].materials.push({
+              id: materialIds[j], 
+              name: materialName, 
+              qty: materialQtys[j]
+            });
+          }
         }
       }
       this.mngIDDropdownOptions = [];

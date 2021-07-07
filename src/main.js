@@ -17,7 +17,7 @@ Vue.use(VueAxios, axios)
 Vue.use(
   new VueSocketIO({
     debug: true,
-    connection: 'http://localhost:4000', // connection: 'http://45.63.108.165:4000',
+    connection: 'http://45.63.108.165:4000', // connection: 'http://45.63.108.165:4000',
     vuex: {
       store,
       actionPrefix: 'SOCKET_',
