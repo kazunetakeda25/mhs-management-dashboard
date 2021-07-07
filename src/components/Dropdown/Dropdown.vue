@@ -88,7 +88,11 @@ export default {
   computed: {
     filteredOptions() {
       const filtered = [];
-      const regOption = new RegExp(this.searchFilter, "ig");
+      const searchFilter = this.searchFilter.replace(
+        /[.*+?^${}()|[\]\\]/g,
+        "\\$&"
+      );
+      const regOption = new RegExp(searchFilter, "ig");
       for (const option of this.options) {
         if (this.searchFilter.length < 1 || option.name.match(regOption)) {
           if (filtered.length < this.maxItem) filtered.push(option);
@@ -104,6 +108,10 @@ export default {
       this.searchFilter = this.selected.name;
       this.$emit("selected", this.$props.uuid, this.selected);
     },
+    deselect() {
+      this.selected = {};
+      this.searchFilter = "";
+    },
     showOptions() {
       if (!this.disabled && this.optionsShown == false) {
         this.searchFilter = "";
@@ -112,8 +120,7 @@ export default {
     },
     exit() {
       if (!this.selected.id) {
-        this.selected = {};
-        this.searchFilter = "";
+        this.deselect();
       } else {
         this.searchFilter = this.selected.name;
       }
@@ -128,14 +135,19 @@ export default {
   watch: {
     searchFilter() {
       if (this.filteredOptions.length === 0) {
-        this.selected = {};
+        this.deselect();
       } else {
         this.selected = this.filteredOptions[0];
       }
       this.$emit("filter", this.searchFilter);
     },
-    default(val) {
-      this.selectOption(val);
+    default(option) {
+      //console.log(option);
+      if (option && option.id && option.name) {
+        this.selectOption(option);
+      } else {
+        this.deselect();
+      }
     },
   },
 };

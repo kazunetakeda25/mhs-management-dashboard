@@ -263,7 +263,7 @@
                 </b-col>
                 <b-col>
                   <b-input-group>
-                    <b-form-input type="number" placeholder="Qty" v-model="row.addWorkMaterialQty"></b-form-input>
+                    <b-form-input type="number" placeholder="Qty" v-model="row.materialQty"></b-form-input>
                     <b-input-group-append>
                       <b-button size="xs" variant="danger" v-on:click="addWorkRemoveMaterial(row.id)"><i class="fa fa-trash"></i></b-button>
                     </b-input-group-append>
@@ -341,6 +341,36 @@
             <b-form-group label="Description" label-for="editWorkDescription" invalid-feedback="Input Description">
               <b-form-input id="editWorkDescription" type="text" v-model="editWorkDescription"></b-form-input>
             </b-form-group>
+            <div class="form-group">
+              <b-row>
+                <b-col>
+                  <label for="editWorkMaterials">Materials</label>
+                </b-col>
+                <b-col class="d-flex justify-content-end align-items-center">
+                  <b-button size="xs" variant="info" class="float-right" v-on:click="editWorkAddMaterial()">Add</b-button>
+                </b-col>
+              </b-row>
+              <b-form-row v-for="row in editWorkMaterialList" :key="row.id" class="my-2">
+                <b-col>
+                  <Dropdown
+                    :uuid="row.id"
+                    :options="addWorkMaterialDropdownOptions"
+                    :default="{ id: row.id, name: row.materialName }"
+                    v-on:selected="editWorkMaterialSelected"
+                    :maxItem="10"
+                    page="Dashboard"
+                    placeholder="Select Material ID"></Dropdown>
+                </b-col>
+                <b-col>
+                  <b-input-group>
+                    <b-form-input type="number" placeholder="Qty" v-model="row.materialQty"></b-form-input>
+                    <b-input-group-append>
+                      <b-button size="xs" variant="danger" v-on:click="editWorkRemoveMaterial(row.id)"><i class="fa fa-trash"></i></b-button>
+                    </b-input-group-append>
+                  </b-input-group>
+                </b-col>
+              </b-form-row>
+            </div>
             <b-form-group label="Instruction Text" label-for="editWorkInstructionText" invalid-feedback="Input Instruction Text">
               <b-form-textarea id="editWorkInstructionText" type="text" v-model="editWorkInstructionText" rows="5" min-rows="5"></b-form-textarea>
             </b-form-group>
@@ -548,16 +578,31 @@
       </b-modal>
       <b-modal no-close-on-backdrop id="stacking-modal" size="lg" centered title="Stacking">
         <div style="width: 100%; height: 400px" class="d-flex justify-content-center align-items-center">
-          <p>Stacking Placeholder</p>
+          <p>{{ assSubWorkOrderInProgress.instruction_text }}</p>
         </div>
         <template #modal-footer="{ cancel }">
           <b-button size="sm" variant="default" @click="cancel()">Close</b-button>
         </template>
       </b-modal>
-      <b-modal no-close-on-backdrop id="materials-modal" size="lg" centered title="Materials">
-        <div style="width: 100%; height: 400px" class="d-flex justify-content-center align-items-center">
-          <p>Materials Placeholder</p>
-        </div>
+      <b-modal no-close-on-backdrop id="materials-modal" centered title="Materials">
+        <div class="table-responsive">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Name</th>
+                  <th>Qty</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="row in assSubWorkOrderInProgress.materials" :key="row.id">
+                  <td>{{ row.id }}</td>
+                  <td>{{ row.name }}</td>
+                  <td>{{ row.qty }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         <template #modal-footer="{ cancel }">
           <b-button size="sm" variant="default" @click="cancel()">Close</b-button>
         </template>
@@ -670,7 +715,19 @@ export default {
           if (this.assSubWorkOrderList[i].instruction_photo != undefined && this.assSubWorkOrderList[i].instruction_photo.length > 0) {
             this.assSubWorkOrderList[i].instruction_photo = "/images/" + this.assSubWorkOrderList[i].instruction_photo;
           }
+          this.assSubWorkOrderList[i].materials = [];
+          const materialIds = this.assSubWorkOrderList[i].material_ids.split(',');
+          const materialQtys = this.assSubWorkOrderList[i].material_qtys.split(',');
+          for (let j = 0; j < materialIds.length; j++) {
+            const materialName = this.devMaterialList.find(it => it.id == materialIds[j]).name;
+            this.assSubWorkOrderList[i].materials.push({
+              id: materialIds[j], 
+              name: materialName, 
+              qty: materialQtys[j]
+            });
+          }
         }
+        this.assSubWorkOrderList = this.assSubWorkOrderList.filter(it => it.station_name == this.stationName);
       }
       this.assSubWorkOrderInProgress = {};
       if (this.mngIDDropdownOptions == undefined ||
@@ -722,7 +779,7 @@ export default {
       email: "",
       role: "",
       stationName: "",
-
+      // Work
       addWorkItemID: "",
       addWorkImage: null,
       addWorkImageUploaded: 0,
@@ -734,33 +791,38 @@ export default {
       addWorkInstructionPhotoUploaded: 0,
       addWorkInstructionVideo: null,
       addWorkInstructionVideoUploaded: 0,
-      viewWorkVideoSource: null,
-      viewWorkPhotoUrl: null,
-
       editWorkID: "",
       editWorkItemID: "",
       editWorkImage: null,
       editWorkImageUploaded: 0,
       editWorkDescription: "",
+      editWorkMaterialList: [],
+      editWorkMaterialDropdownOptions: [],
       editWorkInstructionText: "",
       editWorkInstructionPhoto: null,
       editWorkInstructionPhotoUploaded: 0,
       editWorkInstructionVideo: null,
       editWorkInstructionVideoUploaded: 0,
-
+      viewWorkVideoSource: null,
+      viewWorkPhotoUrl: null,
+      // Material
       addMaterialName: null, 
       addMaterialImage: null, 
       addMaterialImageUploaded: 0, 
       addMaterialDescription: null, 
-
       editMaterialID: null, 
       editMaterialName: null, 
       editMaterialImage: null, 
       editMaterialImageUploaded: 0, 
       editMaterialDescription: null, 
-
+      // Work Order
+      addWorkOrderDisabled: false,
+      addWorkOrderID: "",
+      addWorkOrderQuantity: "",
+      addWorkOrderStation: null,
+      addStationName: "",
+      // Data
       devMaterialList: [], // Material List
-
       mngWorkList: [], // Work List
       mngIDDropdownOptions: [],
       mngWorkOrderList: [], // Work Order List
@@ -768,13 +830,6 @@ export default {
       mngStationList: [], // Station List
       mngStationDropdownOptions: [],
       mngBuiltCount: 0,
-
-      addWorkOrderDisabled: false,
-      addWorkOrderID: "",
-      addWorkOrderQuantity: "",
-      addWorkOrderStation: null,
-      addStationName: "",
-
       assWorkOrderList: [],
       assSubWorkOrderList: [],
       assSubWorkOrderInProgress: {},
@@ -875,27 +930,34 @@ export default {
       this.addWorkImage = null;
       this.addWorkImageUploaded = 0;
       this.addWorkDescription = "";
+      this.addWorkMaterialList = [];
       this.addWorkInstructionText = "";
       this.addWorkInstructionPhoto = null;
       this.addWorkInstructionPhotoUploaded = 0;
       this.addWorkInstructionVideo = null;
       this.addWorkInstructionVideoUploaded = 0;
-
       this.$bvModal.show("add-work-modal");
     },
     showWorkEditModal: function (data) {
-      this.editWorkID = "";
       this.editWorkID = data.id;
       this.editWorkItemID = data.wid;
       this.editWorkImage = data.image;
       this.editWorkImageUploaded = 0;
       this.editWorkDescription = data.description;
+      this.editWorkMaterialList = [];
+      for (let i = 0; i < data.materials.length; i++) {
+        this.editWorkMaterialList.push({
+          id: i + 1,
+          materialID: data.materials[i].id,
+          materialName: data.materials[i].name,
+          materialQty: data.materials[i].qty, 
+        });
+      }
       this.editWorkInstructionText = data.instruction_text;
       this.editWorkInstructionPhoto = data.instruction_photo;
       this.editWorkInstructionVideo = data.instruction_video;
       this.editWorkInstructionPhotoUploaded = 0;
       this.editWorkInstructionVideoUploaded = 0;
-
       this.$bvModal.show("edit-work-modal");
     },
     addWork: function () {
@@ -927,16 +989,16 @@ export default {
       let materialIDs = [];
       let materialQtys = [];
       for (let i = 0; i < this.addWorkMaterialList.length; i++) {
-        if (this.addWorkMaterialList[i].addWorkMaterialID != null && this.addWorkMaterialList[i].addWorkMaterialQty != null) {
-          materialIDs.push(this.addWorkMaterialList[i].addWorkMaterialID);
-          materialQtys.push(this.addWorkMaterialList[i].addWorkMaterialQty);
+        if (this.addWorkMaterialList[i].materialID != null && this.addWorkMaterialList[i].materialQty != null) {
+          materialIDs.push(this.addWorkMaterialList[i].materialID);
+          materialQtys.push(this.addWorkMaterialList[i].materialQty);
         }
       }
       this.$socket.emit("addWork", {
         wid: this.addWorkItemID,
         image: this.addWorkImage,
         description: this.addWorkDescription,
-        material_names: materialNames.join(','), 
+        material_ids: materialIDs.join(','), 
         material_qtys: materialQtys.join(','), 
         instruction_text: this.addWorkInstructionText,
         instruction_photo: this.addWorkInstructionPhoto,
@@ -970,20 +1032,24 @@ export default {
         console.log("Instruction Photo file is being uploaded. Please wait...");
         return;
       }
+      let materialIDs = [];
+      let materialQtys = [];
+      for (let i = 0; i < this.editWorkMaterialList.length; i++) {
+        if (this.editWorkMaterialList[i].materialID != null && this.editWorkMaterialList[i].materialQty != null) {
+          materialIDs.push(this.editWorkMaterialList[i].materialID);
+          materialQtys.push(this.editWorkMaterialList[i].materialQty);
+        }
+      }
       this.$socket.emit("editWork", {
         id: this.editWorkID,
         wid: this.editWorkItemID,
         image: this.editWorkImageUploaded == 2 ? this.editWorkImage : "",
         description: this.editWorkDescription,
+        material_ids: materialIDs.join(','), 
+        material_qtys: materialQtys.join(','), 
         instruction_text: this.editWorkInstructionText,
-        instruction_photo:
-          this.editWorkInstructionPhotoUploaded == 2
-            ? this.editWorkInstructionPhoto
-            : "",
-        instruction_video:
-          this.editWorkInstructionVideoUploaded == 2
-            ? this.editWorkInstructionVideo
-            : "",
+        instruction_photo: this.editWorkInstructionPhotoUploaded == 2 ? this.editWorkInstructionPhoto : "",
+        instruction_video: this.editWorkInstructionVideoUploaded == 2 ? this.editWorkInstructionVideo : "",
       });
       this.$bvModal.hide("edit-work-modal");
     },
@@ -1000,8 +1066,8 @@ export default {
     addWorkMaterialSelected: function (uuid, data) {
       for (let i = 0; i < this.addWorkMaterialList.length; i++) {
         if (this.addWorkMaterialList[i].id == uuid) {
-          this.addWorkMaterialList[i].addWorkMaterialID = data.id;
-          this.addWorkMaterialList[i].addWorkMaterialName = data.name;
+          this.addWorkMaterialList[i].materialID = data.id;
+          this.addWorkMaterialList[i].materialName = data.name;
           break;
         }
       }
@@ -1010,16 +1076,16 @@ export default {
       const count = this.addWorkMaterialList.length;
       this.addWorkMaterialList.push({
         id: count + 1,
-        addWorkMaterialID: null,
-        addWorkMaterialName: null,
-        addWorkMaterialQty: null,
+        materialID: null,
+        materialName: null,
+        materialQty: null,
       });
     },
     addWorkRemoveMaterial: function (id) {
       for (let i = 0; i < this.addWorkMaterialList.length; i++) {
         if ( this.addWorkMaterialList[i].id == id) { 
-            this.addWorkMaterialList.splice(i, 1); 
-            break;
+          this.addWorkMaterialList.splice(i, 1); 
+          break;
         }
       }
     },
@@ -1043,6 +1109,32 @@ export default {
     addWorkInstructionPhotoFileUploaded: function (file) {
       this.addWorkInstructionPhotoUploaded = 2;
       this.addWorkInstructionPhoto = file.name;
+    },
+    editWorkMaterialSelected: function (uuid, data) {
+      for (let i = 0; i < this.editWorkMaterialList.length; i++) {
+        if (this.editWorkMaterialList[i].id == uuid) {
+          this.editWorkMaterialList[i].materialID = data.id;
+          this.editWorkMaterialList[i].materialName = data.name;
+          break;
+        }
+      }
+    },
+    editWorkAddMaterial: function () {
+      const count = this.editWorkMaterialList.length;
+      this.editWorkMaterialList.push({
+        id: count + 1,
+        materialID: null,
+        materialName: null,
+        materialQty: null,
+      });
+    },
+    editWorkRemoveMaterial: function (id) {
+      for (let i = 0; i < this.editWorkMaterialList.length; i++) {
+        if ( this.editWorkMaterialList[i].id == id) { 
+          this.editWorkMaterialList.splice(i, 1); 
+          break;
+        }
+      }
     },
     editWorkImageFileAdded: function () {
       this.editWorkImageUploaded = 1;
